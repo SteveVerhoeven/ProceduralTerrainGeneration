@@ -1,8 +1,5 @@
 # ProceduralTerrainGeneration
 ## Description
-<p align="center">
-  <img src="ReadMeImages/icon.png" width="100" title="hover text">
-</p>
 The original idea was to research and try to implement terraforming in my own engine. But after the GPU Instancing I came to the conclusion that I needed a terrain mesh to do that and I didn’t want to make my own in 3DS Max. So here comes the procedural terrain generation into play. Only problem was that I knew nothing about procedural generation.
 
 ## From zero to learning hero
