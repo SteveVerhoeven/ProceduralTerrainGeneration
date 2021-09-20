@@ -1,0 +1,17 @@
+# 3ds Max Wavefront OBJ Exporter v0.97b - (c)2007 guruware
+# File Created: 22.10.2019 10:59:02
+
+#
+# object Triangle
+#
+
+v  0.0, 0.5, 0.5
+v  0.5, -0.5, 0.5
+v  0.5f, -0.5, 0.5
+# 3 vertices
+
+o Box001
+g Box001
+f 1 2 3 
+# 1 faces
+
