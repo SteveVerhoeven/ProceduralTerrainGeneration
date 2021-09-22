@@ -7,7 +7,7 @@ float gHeightMultiplier = 25.f;
 
 SamplerState samLinear
 {
-	Filter = ANISOTROPIC;
+	Filter = MIN_MAG_MIP_POINT;
 	AddressU = Clamp;// or Mirror or Clamp or Border
 	AddressV = Clamp;// or Mirror or Clamp or Border
 };

@@ -10,17 +10,15 @@
 #endif
 
 // Game include
-#include "DevGame.h"
+#include "VGame.h"
 
 // Application Entry Point - References:
 // - https://docs.microsoft.com/en-us/windows/win32/learnwin32/winmain--the-application-entry-point
 // - https://docs.microsoft.com/en-us/windows/win32/api/winbase/nf-winbase-winmain
 int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE /*hPrevInstance*/, LPSTR /*lpCmdLine*/, int /*nShowCmd*/)
 {
-	DevGame devGame{"Development Game - Extending engine"};
-	devGame.Initialize(hInstance);
-	devGame.PostInitialize();
-	return devGame.GameLoop();
+	VGame vGame{ "Vanaheim Project Game - Making own game" };
+	vGame.Initialize(hInstance);
+	vGame.PostInitialize();
+	return vGame.GameLoop();
 }
-
-

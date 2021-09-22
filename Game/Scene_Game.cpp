@@ -1,5 +1,5 @@
 #include "pch.h"
-#include "Scene_ProcGen.h"
+#include "Scene_Game.h"
 
 #include <InputManager.h>
 #include <MoveCameraCommand.h>
@@ -15,15 +15,15 @@
 #include "NoiseGenerator.h"
 #include "TerrainGenerator.h"
 
-Scene_ProcGen::Scene_ProcGen()
-	: Scene()
-	, m_NoiseGenSettings(0, 0, 0.f, 0.f, 0.f, { 0, 0 })
-	, m_ProcGenSettings(0, 0, m_NoiseGenSettings)
+Scene_Game::Scene_Game()
+		   : Scene()
+		   , m_NoiseGenSettings(0, 0, 0.f, 0.f, 0.f, { 0, 0 })
+		   , m_ProcGenSettings(0, 0, m_NoiseGenSettings)
 {}
-Scene_ProcGen::~Scene_ProcGen()
+Scene_Game::~Scene_Game()
 {}
 
-void Scene_ProcGen::Initialize()
+void Scene_Game::Initialize()
 {
 	CreateMainCamera();
 	CreateLandscape();
@@ -39,28 +39,18 @@ void Scene_ProcGen::Initialize()
 	ActivateScene();
 	Scene::Initialize();
 }
-void Scene_ProcGen::PostInitialize()
-{
-	Scene::PostInitialize();
-}
-void Scene_ProcGen::Update(const float elapsedSec)
-{
-	Scene::Update(elapsedSec);
-}
-void Scene_ProcGen::FixedUpdate(const float timeEachUpdate)
-{
-	Scene::FixedUpdate(timeEachUpdate);
-}
-void Scene_ProcGen::LateUpdate()
-{
-	Scene::LateUpdate();
-}
-void Scene_ProcGen::Render() const
-{
-	Scene::Render();
-}
+void Scene_Game::PostInitialize()
+{ Scene::PostInitialize(); }
+void Scene_Game::Update(const float elapsedSec)
+{ Scene::Update(elapsedSec); }
+void Scene_Game::FixedUpdate(const float timeEachUpdate)
+{ Scene::FixedUpdate(timeEachUpdate); }
+void Scene_Game::LateUpdate()
+{ Scene::LateUpdate(); }
+void Scene_Game::Render() const
+{ Scene::Render(); }
 
-void Scene_ProcGen::CreateInputs()
+void Scene_Game::CreateInputs()
 {
 	InputManager* pInputManager{ Locator::GetInputManagerService() };
 
@@ -70,21 +60,21 @@ void Scene_ProcGen::CreateInputs()
 	pInputManager->AddKeyToMap(ControllerButton::ButtonRight, KeyboardButton::D, ButtonPressType::BUTTON_RELEASED, "MOVE_RIGHT", new MoveCameraCommand(false, false, false, true));
 	pInputManager->AddKeyToMap(ControllerButton::ButtonLThumbStick, KeyboardButton::E, ButtonPressType::BUTTON_HOLD, "ROTATE", new RotateCameraCommand());
 }
-void Scene_ProcGen::CreateMainCamera()
+void Scene_Game::CreateMainCamera()
 {
 	// **********************
 	// Creating - Main camera
 	// **********************
 	const std::string name3{ "Camera-Main" };
-	const DirectX::XMFLOAT3 pos3{ 200, 100, -600 };
+	const DirectX::XMFLOAT3 pos3{ 200, 100, -200 };
 	CreateCamera(name3, pos3);
 }
-void Scene_ProcGen::CreateLandscape()
+void Scene_Game::CreateLandscape()
 {
 	// **********************
 	// Creating - Landscape
 	// **********************
-	const int size{ 400 };
+	const int size{ 100 };
 	// Noise Generator settings
 	const size_t seed{ 1 };
 	const size_t octaves{ 5 };

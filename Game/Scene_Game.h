@@ -1,17 +1,17 @@
 #pragma once
-#include "Scene.h"
+#include <Scene.h>
 #include <GeneratorSettings.h>
 
-class Scene_ProcGen final : public Scene
+class Scene_Game final : public Scene
 {
 	public:
-		Scene_ProcGen();
-		virtual ~Scene_ProcGen() override;
+		Scene_Game();
+		virtual ~Scene_Game() override;
 
-		Scene_ProcGen(const Scene_ProcGen& other) = delete;
-		Scene_ProcGen(Scene_ProcGen&& other) = delete;
-		Scene_ProcGen& operator=(const Scene_ProcGen& other) = delete;
-		Scene_ProcGen& operator=(Scene_ProcGen&& other) = delete;
+		Scene_Game(const Scene_Game& other) = delete;
+		Scene_Game(Scene_Game&& other) = delete;
+		Scene_Game& operator=(const Scene_Game& other) = delete;
+		Scene_Game& operator=(Scene_Game&& other) = delete;
 
 		virtual void Initialize() override;
 		virtual void PostInitialize() override;

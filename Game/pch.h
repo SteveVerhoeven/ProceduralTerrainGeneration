@@ -1,7 +1,7 @@
 #pragma once
-// ****************
-// PCH file DevGame
-// ****************
+// **************
+// PCH file VGame
+// **************
 
 #pragma region Includes
 // ----------------------------
@@ -25,9 +25,9 @@
 #include <d3dcompiler.h>
 #pragma comment(lib, "d3dcompiler.lib")
 // Reference: https://fx11.codeplex.com/
-#include <d3dx11effect.h> 
+#include <../Libs/DX_Effects11/include/d3dx11effect.h>
 // Reference: http://directxtex.codeplex.com/
-#include <DirectXTex.h>
+#include <../Libs/DX_Tex/include/DirectXTex.h>
 #include <DirectXMath.h>
 #include <DirectXColors.h>
 #include <DirectXPackedVector.h>
