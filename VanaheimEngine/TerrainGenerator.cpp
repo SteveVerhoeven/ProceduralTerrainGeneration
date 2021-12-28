@@ -37,8 +37,9 @@ Mesh* TerrainGenerator::CreateTerrain()
 	const std::vector<std::vector<float>> noiseMap = m_pNoiseGenerator->GenerateNoiseMap({0,0,0});
 	GenerateColorMap(noiseMap);
 
-	CreateVertices();
-	CreateIndices();
+	//CreateVertices();
+	CreateVoxels();
+	//CreateIndices();
 
 	Mesh* pMesh{ new Mesh() };
 	pMesh->Initialize(m_Vertices, m_Indices);
@@ -76,15 +77,6 @@ void TerrainGenerator::GenerateColorMap(const std::vector<std::vector<float>>& n
 
 void TerrainGenerator::onNotify(ObserverEvent event)
 {
-	/*if (event == ObserverEvent::INCREASE_XRES)
-		m_Settings.xRes++;
-	if (event == ObserverEvent::DECREASE_XRES)
-		m_Settings.xRes--;
-	if (event == ObserverEvent::INCREASE_ZRES)
-		m_Settings.zRes++;
-	if (event == ObserverEvent::DECREASE_ZRES)
-		m_Settings.zRes--;*/
-
 	if (event == ObserverEvent::REBUILD_LANDSCAPE)
 		GenerateColorMap(m_pNoiseGenerator->GetNoiseMap());
 }
@@ -123,8 +115,8 @@ void TerrainGenerator::CreateIndices()
 	{
 		for (int x{}; x < width; ++x)
 		{
-			if (x < width - 1 && z < height - 1)
-			{
+			/*if (x < width - 1 && z < height - 1)
+			{*/
 				// i		 i + 1
 				// +---------+
 				// |         |
@@ -140,11 +132,185 @@ void TerrainGenerator::CreateIndices()
 				m_Indices.push_back(vertexIndex + width + 1);
 				m_Indices.push_back(vertexIndex);
 				m_Indices.push_back(vertexIndex + 1);
-			}
-			vertexIndex++;
+			/*}
+			vertexIndex++;*/
 		}
 	}
 }
+void TerrainGenerator::CreateVoxels()
+{
+	const int width{ m_Settings.xRes };
+	const int height{ m_Settings.zRes };
+	for (int z{}; z < height; ++z)
+	{
+		for (int x{}; x < width; ++x)
+		{
+			// Side Front
+			CreateFrontFace(x, z, width, height);
+			// Side Left
+			CreateLeftFace(x, z, width, height);
+			// Side Right
+			CreateRightFace(x, z, width, height);
+			// Side Bottom
+			CreateBottomFace(x, z, width, height);
+			// Side Top
+			CreateTopFace(x, z, width, height);
+			// Side Back
+			CreateBackFace(x, z, width, height);			
+		}
+	}
+}
+
+void TerrainGenerator::CreateVoxelIndices()
+{
+	// i		 i + 1
+	// +---------+
+	// |         |
+	// |		 |
+	// |		 |
+	// +---------+
+	// i + w	 i + w + 1
+
+	m_Indices.push_back(m_Vertices.size() - 4);
+	m_Indices.push_back(m_Vertices.size() - 1);
+	m_Indices.push_back(m_Vertices.size() - 3);
+
+	m_Indices.push_back(m_Vertices.size() - 1);
+	m_Indices.push_back(m_Vertices.size() - 4);
+	m_Indices.push_back(m_Vertices.size() - 2);
+}
+
+void TerrainGenerator::CreateFrontFace(const int x, const int z, const int width, const int height)
+{
+	const float size{ 0.5f };
+	DirectX::XMFLOAT3 pos{ DirectX::XMFLOAT3((float)x, 0.f, -(float)z) };
+
+	Vertex_Input vLT{};		Vertex_Input vRT{};
+	Vertex_Input vLB{};		Vertex_Input vRB{};
+
+	vLT.Position = DirectX::XMFLOAT3(pos.x - size, pos.y + size, pos.z - size );
+	vLB.Position = DirectX::XMFLOAT3(pos.x - size, pos.y - size, pos.z - size );
+	vRT.Position = DirectX::XMFLOAT3(pos.x + size, pos.y + size, pos.z - size );
+	vRB.Position = DirectX::XMFLOAT3(pos.x + size, pos.y - size, pos.z - size );
+	
+	vLT.UV = vLB.UV = vRT.UV = vRB.UV = DirectX::XMFLOAT2((float(x) / float(width)), (float(z) / float(height)));
+	
+	m_Vertices.push_back(vLT);
+	m_Vertices.push_back(vLB);
+	m_Vertices.push_back(vRT);
+	m_Vertices.push_back(vRB);
+
+	CreateVoxelIndices();
+}
+void TerrainGenerator::CreateLeftFace(const int x, const int z, const int width, const int height)
+{
+	const float size{ 0.5f };
+	DirectX::XMFLOAT3 pos{ DirectX::XMFLOAT3((float)x, 0.f, -(float)z) };
+
+	Vertex_Input vLT{};		Vertex_Input vRT{};
+	Vertex_Input vLB{};		Vertex_Input vRB{};
+
+	vLT.Position = DirectX::XMFLOAT3(pos.x - size, pos.y + size, pos.z + size);
+	vLB.Position = DirectX::XMFLOAT3(pos.x - size, pos.y - size, pos.z + size);
+	vRT.Position = DirectX::XMFLOAT3(pos.x - size, pos.y + size, pos.z - size);
+	vRB.Position = DirectX::XMFLOAT3(pos.x - size, pos.y - size, pos.z - size);
+
+	vLT.UV = vLB.UV = vRT.UV = vRB.UV = DirectX::XMFLOAT2((float(x) / float(width)), (float(z) / float(height)));
+
+	m_Vertices.push_back(vLT);
+	m_Vertices.push_back(vLB);
+	m_Vertices.push_back(vRT);
+	m_Vertices.push_back(vRB);
+
+	CreateVoxelIndices();
+}
+void TerrainGenerator::CreateRightFace(const int x, const int z, const int width, const int height)
+{
+	DirectX::XMFLOAT3 pos{ DirectX::XMFLOAT3((float)x, 0.f, -(float)z) };
+
+	Vertex_Input vLT{};		Vertex_Input vRT{};
+	Vertex_Input vLB{};		Vertex_Input vRB{};
+
+	vLT.Position = DirectX::XMFLOAT3(pos.x + 0.5f, pos.y + 0.5f, pos.z - 0.5f);
+	vLB.Position = DirectX::XMFLOAT3(pos.x + 0.5f, pos.y - 0.5f, pos.z - 0.5f);
+	vRT.Position = DirectX::XMFLOAT3(pos.x + 0.5f, pos.y + 0.5f, pos.z + 0.5f);
+	vRB.Position = DirectX::XMFLOAT3(pos.x + 0.5f, pos.y - 0.5f, pos.z + 0.5f);
+
+	vLT.UV = vLB.UV = vRT.UV = vRB.UV = DirectX::XMFLOAT2((float(x) / float(width)), (float(z) / float(height)));
+
+	m_Vertices.push_back(vLT);
+	m_Vertices.push_back(vLB);
+	m_Vertices.push_back(vRT);
+	m_Vertices.push_back(vRB);
+
+	CreateVoxelIndices();
+}
+void TerrainGenerator::CreateBottomFace(const int x, const int z, const int width, const int height)
+{
+	DirectX::XMFLOAT3 pos{ DirectX::XMFLOAT3((float)x, 0.f, -(float)z) };
+
+	Vertex_Input vLT{};		Vertex_Input vRT{};
+	Vertex_Input vLB{};		Vertex_Input vRB{};
+
+	vLT.Position = DirectX::XMFLOAT3(pos.x - 0.5f, pos.y - 0.5f, pos.z - 0.5f);
+	vLB.Position = DirectX::XMFLOAT3(pos.x - 0.5f, pos.y - 0.5f, pos.z + 0.5f);
+	vRT.Position = DirectX::XMFLOAT3(pos.x + 0.5f, pos.y - 0.5f, pos.z - 0.5f);
+	vRB.Position = DirectX::XMFLOAT3(pos.x + 0.5f, pos.y - 0.5f, pos.z + 0.5f);
+
+	vLT.UV = vLB.UV = vRT.UV = vRB.UV = DirectX::XMFLOAT2((float(x) / float(width)), (float(z) / float(height)));
+
+	m_Vertices.push_back(vLT);
+	m_Vertices.push_back(vLB);
+	m_Vertices.push_back(vRT);
+	m_Vertices.push_back(vRB);
+
+	CreateVoxelIndices();
+}
+void TerrainGenerator::CreateTopFace(const int x, const int z, const int width, const int height)
+{
+	DirectX::XMFLOAT3 pos{ DirectX::XMFLOAT3((float)x, 0.f, -(float)z) };
+
+	Vertex_Input vLT{};		Vertex_Input vRT{};
+	Vertex_Input vLB{};		Vertex_Input vRB{};
+
+	vLT.Position = DirectX::XMFLOAT3(pos.x - 0.5f, pos.y + 0.5f, pos.z + 0.5f);
+	vLB.Position = DirectX::XMFLOAT3(pos.x - 0.5f, pos.y + 0.5f, pos.z - 0.5f);
+	vRT.Position = DirectX::XMFLOAT3(pos.x + 0.5f, pos.y + 0.5f, pos.z + 0.5f);
+	vRB.Position = DirectX::XMFLOAT3(pos.x + 0.5f, pos.y + 0.5f, pos.z - 0.5f);
+
+	vLT.UV = vLB.UV = vRT.UV = vRB.UV = DirectX::XMFLOAT2((float(x) / float(width)), (float(z) / float(height)));
+
+	m_Vertices.push_back(vLT);
+	m_Vertices.push_back(vLB);
+	m_Vertices.push_back(vRT);
+	m_Vertices.push_back(vRB);
+
+	CreateVoxelIndices();
+}
+void TerrainGenerator::CreateBackFace(const int x, const int z, const int width, const int height)
+{
+	DirectX::XMFLOAT3 pos{ DirectX::XMFLOAT3((float)x, 0.f, -(float)z) };
+
+	Vertex_Input vLT{};		Vertex_Input vRT{};
+	Vertex_Input vLB{};		Vertex_Input vRB{};
+
+	vLT.Position = DirectX::XMFLOAT3(pos.x - 0.5f, pos.y + 0.5f, pos.z + 0.5f);
+	vLB.Position = DirectX::XMFLOAT3(pos.x - 0.5f, pos.y - 0.5f, pos.z + 0.5f);
+	vRT.Position = DirectX::XMFLOAT3(pos.x + 0.5f, pos.y + 0.5f, pos.z + 0.5f);
+	vRB.Position = DirectX::XMFLOAT3(pos.x + 0.5f, pos.y - 0.5f, pos.z + 0.5f);
+
+	vLT.UV = vLB.UV = vRT.UV = vRB.UV = DirectX::XMFLOAT2((float(x) / float(width)), (float(z) / float(height)));
+
+	m_Vertices.push_back(vLT);
+	m_Vertices.push_back(vLB);
+	m_Vertices.push_back(vRT);
+	m_Vertices.push_back(vRB);
+
+	CreateVoxelIndices();
+}
+
+
+
 
 void TerrainGenerator::CreateUIData()
 {

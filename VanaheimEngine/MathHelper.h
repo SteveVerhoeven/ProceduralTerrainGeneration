@@ -59,6 +59,7 @@ std::vector<std::vector<T>> Normalize2DVector(std::vector<std::vector<T>> vector
 	for (size_t y{}; y < vectorSize; ++y)
 		for (size_t x{}; x < vectorSize; ++x)
 			vector[x][y] = Remap(vector[x][y], minHeight, maxHeight);
+			//vector[x][y] = Remap(vector[x][y], 0.f, 1.f);
 
 	return vector;
 }

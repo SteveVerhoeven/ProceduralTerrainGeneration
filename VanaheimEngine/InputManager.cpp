@@ -8,6 +8,9 @@
 #include "Window.h"
 #include "imgui.h"
 
+#include "UIManager.h"
+#include "ConsoleUI.h"
+
 InputManager::InputManager()
 			 : m_MousePosition()
 			 , m_OldMousePosition()
@@ -65,6 +68,8 @@ bool InputManager::ProcessWindowsEvents(MSG& msg)
 			{
 				if (msg.message == WM_MOUSEMOVE)
 				{
+					Locator::GetUIManagerService()->GetUI<ConsoleUI>()->Log("Moving\n");
+
 					POINT mousePos{ GetMousePosition() };
 					POINT mouseMov{ GetMouseMovement() };
 
@@ -77,6 +82,19 @@ bool InputManager::ProcessWindowsEvents(MSG& msg)
 					pRotateCommand->SetMousePos(mouse);
 					pCommand->Execute();
 				}
+				Locator::GetUIManagerService()->GetUI<ConsoleUI>()->Log("Moving\n");
+
+				POINT mousePos{ GetMousePosition() };
+				POINT mouseMov{ GetMouseMovement() };
+
+				DirectX::XMFLOAT2 mouse{};
+				mouse.x = float(mouseMov.x);
+				mouse.y = float(mouseMov.y);
+
+				Command* pCommand{ GetCommand(ControllerButton::ButtonLThumbStick) };
+				RotateCameraCommand* pRotateCommand{ dynamic_cast<RotateCameraCommand*>(pCommand) };
+				pRotateCommand->SetMousePos(mouse);
+				pCommand->Execute();
 			}
 		}
 	}

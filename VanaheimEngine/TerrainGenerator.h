@@ -43,6 +43,7 @@ class TerrainGenerator final : public Generator
 		std::vector<Terrain> m_TerrainRegions;
 		std::vector<Vertex_Input> m_Vertices;
 		std::vector<uint32_t> m_Indices;
+		std::vector<Voxel> m_Voxels;
 
 		// *************
 		// Functions
@@ -53,6 +54,18 @@ class TerrainGenerator final : public Generator
 
 		// UI
 		void CreateUIData();
+		
+		// Voxels
+		void CreateVoxels();
+		void CreateVoxelIndices();
+
+		void CreateFrontFace(const int x, const int z, const int width, const int height);
+		void CreateLeftFace(const int x, const int z, const int width, const int height);
+		void CreateRightFace(const int x, const int z, const int width, const int height);
+		void CreateBottomFace(const int x, const int z, const int width, const int height);
+		void CreateTopFace(const int x, const int z, const int width, const int height);
+		void CreateBackFace(const int x, const int z, const int width, const int height);
+
 };
 
 template<typename T>

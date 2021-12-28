@@ -28,3 +28,9 @@ struct Terrain
 	float height{};
 	DirectX::XMFLOAT3 color{};
 };
+
+struct Voxel
+{
+	std::vector<size_t> indices{};
+	std::vector< Vertex_Input> vertices{};
+};

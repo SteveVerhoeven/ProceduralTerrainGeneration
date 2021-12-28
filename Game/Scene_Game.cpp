@@ -61,7 +61,8 @@ void Scene_Game::CreateMainCamera()
 	// Creating - Main camera
 	// **********************
 	const std::string name3{ "Camera-Main" };
-	const DirectX::XMFLOAT3 pos3{ 300, 50, -650 };
+	const DirectX::XMFLOAT3 pos3{ 300, 50, -650 };	 // For size 400x400
+	//const DirectX::XMFLOAT3 pos3{ 0, 14, 0 };
 	CreateCamera(name3, pos3);
 }
 void Scene_Game::CreateLandscape()
