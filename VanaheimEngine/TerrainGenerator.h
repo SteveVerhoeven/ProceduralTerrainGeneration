@@ -16,12 +16,17 @@ class TerrainGenerator final : public Generator
 
 		void Initialize();
 
+		// Terrain
 		Mesh* CreateTerrain();
+
+		// Generating
 		void GenerateColorMap(const std::vector<std::vector<float>>& noiseMap);
 
+		// Settings
 		void EditSettings(const ProcGenSettings& settings);
-		ProcGenSettings GetProcGenSettings() const { return m_Settings; }
+		ProcGenSettings& GetProcGenSettings() { return m_Settings; }
 
+		// UI
 		template<typename T>
 		T GetValueByName(const std::string& name) const;
 
@@ -29,6 +34,9 @@ class TerrainGenerator final : public Generator
 		virtual void onNotify(ObserverEvent event) override;
 
 	private:
+		// *************
+		// Variables
+		// *************
 		ProcGenSettings m_Settings;
 
 		NoiseGenerator* m_pNoiseGenerator;
@@ -36,9 +44,14 @@ class TerrainGenerator final : public Generator
 		std::vector<Vertex_Input> m_Vertices;
 		std::vector<uint32_t> m_Indices;
 
+		// *************
+		// Functions
+		// *************
+		// General
 		void CreateVertices();
 		void CreateIndices();
 
+		// UI
 		void CreateUIData();
 };
 

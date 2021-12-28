@@ -16,6 +16,12 @@
 #include "ResourceManager.h"
 #include "GeneratorManager.h"
 
+
+#include "InspectorUI.h"
+#include "ConsoleUI.h"
+#include "NoiseGenerator.h"
+#include "TerrainGenerator.h"
+
 VanaheimEngine::VanaheimEngine()
 			   : m_pTimer(nullptr)
 			   , m_pWindow(nullptr)
@@ -48,6 +54,7 @@ void VanaheimEngine::Initialize(HINSTANCE instance)
 	m_pGraphics = new Graphics(m_pWindow->GetWindowHandle(), width, height);
 
 	InitializeLocator();
+	InitializeEngineUI();
 }
 void VanaheimEngine::Update()
 {
@@ -80,6 +87,16 @@ void VanaheimEngine::InitializeLocator()
 
 	m_pGeneratorManager = new GeneratorManager();
 	Locator::ProvideGeneratorManagerService(m_pGeneratorManager);
+}
+void VanaheimEngine::InitializeEngineUI()
+{
+	InspectorUI* pInspectorUI{ new InspectorUI() };
+	m_pUIManager->AddUI(pInspectorUI);
+	pInspectorUI->AddObserver(m_pGeneratorManager->GetGenerator<NoiseGenerator>());
+	pInspectorUI->AddObserver(m_pGeneratorManager->GetGenerator<TerrainGenerator>());
+
+	ConsoleUI* pConsoleUI{ new ConsoleUI() };
+	m_pUIManager->AddUI(pConsoleUI);
 }
 
 void VanaheimEngine::Render()

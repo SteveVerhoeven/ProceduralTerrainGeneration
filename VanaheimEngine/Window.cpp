@@ -85,6 +85,8 @@ LRESULT Window::WindowProcedureStatic(HWND hWnd, UINT msg, WPARAM wParam, LPARAM
 
 	return DefWindowProc(hWnd, msg, wParam, lParam);
 }
+
+extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 LRESULT Window::WindowProcedure(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
 	if (ImGui_ImplWin32_WndProcHandler(hWnd, msg, wParam, lParam))
@@ -95,38 +97,7 @@ LRESULT Window::WindowProcedure(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lPara
 	{
 		case WM_CLOSE:
 			PostQuitMessage(0);
-			break;
-		/*case WM_KEYDOWN:
-			if (wParam == 'F')
-			{
-				std::string newTitle{ "Valhalla" };
-				SetWindowText(hWnd, newTitle.c_str());
-			}
-			break;
-		case WM_KEYUP:
-			if (wParam == 'F')
-			{
-				std::string newTitle{ "Odin" };
-				SetWindowText(hWnd, newTitle.c_str());
-			}
-			break;
-		case WM_CHAR:
-		{
-			static std::string title{};
-			title.push_back((char)wParam);
-			SetWindowText(hWnd, title.c_str());
-		}
-			break;
-		case WM_LBUTTONDOWN:
-		{
-			POINTS pt{ MAKEPOINTS(lParam) };
-			std::ostringstream oss{};
-			oss << "(" << pt.x << "," << pt.y << ")";
-			SetWindowText(hWnd, oss.str().c_str());
-		}
-			break;*/
-		
-		
+			break;		
 		default:
 			break;
 	}

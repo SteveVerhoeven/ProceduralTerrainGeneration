@@ -9,22 +9,25 @@ enum class FallOffType : int
 struct NoiseGenSettings
 {
 	NoiseGenSettings()
-		: NoiseGenSettings(21, 4, 32.24f, 2.3f, 1.f, { 400, 400 })
+		: NoiseGenSettings(true, 1, 5, 32.24f, 2.3f, 0.448f, { 400, 400 })
 	{}
-	NoiseGenSettings(const size_t seed,
-		const size_t octaves,
-		const float scale,
-		const float lacunarity,
-		const float persistence,
-		const DirectX::XMFLOAT2& size)
-		: seed(seed)
-		, octaves((octaves < 0) ? 0 : octaves)
-		, scale((scale < 0) ? 0 : scale)
-		, lacunarity((lacunarity < 1) ? 1 : lacunarity)
-		, persistence((persistence < 0) ? 0 : persistence)
-		, mapSize(size)
+	NoiseGenSettings(const bool addToInspector,
+					 const size_t seed,
+					 const size_t octaves,
+					 const float scale,
+					 const float lacunarity,
+					 const float persistence,
+					 const DirectX::XMFLOAT2& size)
+					 : addToInspector(addToInspector)
+					 , seed(seed)
+					 , octaves((octaves < 0) ? 0 : octaves)
+					 , scale((scale < 0) ? 0 : scale)
+					 , lacunarity((lacunarity < 1) ? 1 : lacunarity)
+					 , persistence((persistence < 0) ? 0 : persistence)
+					 , mapSize(size)
 	{}
 
+	bool addToInspector;
 	size_t seed;
 	size_t octaves;			// The number of iterations that will be layered together
 	float lacunarity;		// The speed that the frequency grows per octave;		
@@ -36,17 +39,17 @@ struct NoiseGenSettings
 struct ProcGenSettings
 {
 	ProcGenSettings()
-		: ProcGenSettings(0, 0, NoiseGenSettings(0, 0, 0.f, 0.f, 0.f, {}))
+		: ProcGenSettings(400, 400, NoiseGenSettings(true, 1, 5, 32.24f, 2.3f, 0.448f, { 400, 400 }))
 	{}
 	ProcGenSettings(const int xRes,
-		const int zRes,
-		const NoiseGenSettings& noiseSetting)
-		: xRes(xRes)
-		, zRes(zRes)
-		, noiseGenSettings(noiseSetting)
+					const int zRes,
+					const NoiseGenSettings& noiseSetting)
+					: xRes(xRes)
+					, zRes(zRes)
+					, noiseGenSettings(noiseSetting)
 	{}
 
-	int xRes,
-		zRes;
+	int xRes;
+	int	zRes;
 	NoiseGenSettings noiseGenSettings;
 };

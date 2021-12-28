@@ -93,7 +93,7 @@
       <LanguageStandard>stdcpp17</LanguageStandard>
       <PrecompiledHeader>Create</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(SolutionDir)Libs\IMGUI;$(SolutionDir)Libs\DX_Tex\include;$(SolutionDir)Libs\DX_Effects11\include;$(SolutionDir)Libs\Visual Leak Detector\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Libs\IMGUI;$(SolutionDir)Libs\DX_Tex\include;$(SolutionDir)Libs\DX_Effects11\include</AdditionalIncludeDirectories>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
     </ClCompile>
     <Link>
@@ -105,8 +105,8 @@
       <AdditionalLibraryDirectories>$(SolutionDir)Libs\DX_Effects11\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <Lib>
-      <AdditionalLibraryDirectories>$(SolutionDir)Libs\DX_Tex\lib;$(SolutionDir)Libs\DX_Effects11\lib;$(SolutionDir)Libs\Visual Leak Detector\lib\Win32</AdditionalLibraryDirectories>
-      <AdditionalDependencies>DxEffects11_vc14_Release.lib;DxTex_vc14_Release.lib;vld.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)Libs\DX_Tex\lib;$(SolutionDir)Libs\DX_Effects11\lib</AdditionalLibraryDirectories>
+      <AdditionalDependencies>DxEffects11_vc14_Release.lib;DxTex_vc14_Release.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Lib>
     <ProjectReference>
       <LinkLibraryDependencies>true</LinkLibraryDependencies>
@@ -148,6 +148,7 @@
     <ClCompile Include="CameraComponent.cpp" />
     <ClCompile Include="Command.cpp" />
     <ClCompile Include="Component.cpp" />
+    <ClCompile Include="ConsoleUI.cpp" />
     <ClCompile Include="DebugLogger.cpp" />
     <ClCompile Include="DemoUI.cpp" />
     <ClCompile Include="Game.cpp" />
@@ -183,6 +184,7 @@
     <ClCompile Include="UIComponent.cpp" />
     <ClCompile Include="UIManager.cpp" />
     <ClCompile Include="VanaheimEngine.cpp" />
+    <ClCompile Include="InspectorUI.cpp" />
     <ClCompile Include="Window.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -197,6 +199,7 @@
     <ClInclude Include="CameraComponent.h" />
     <ClInclude Include="Command.h" />
     <ClInclude Include="Component.h" />
+    <ClInclude Include="ConsoleUI.h" />
     <ClInclude Include="DebugLogger.h" />
     <ClInclude Include="DemoUI.h" />
     <ClInclude Include="Game.h" />
@@ -237,8 +240,10 @@
     <ClInclude Include="TransformComponent.h" />
     <ClInclude Include="UI.h" />
     <ClInclude Include="UIComponent.h" />
+    <ClInclude Include="UIData.h" />
     <ClInclude Include="UIManager.h" />
     <ClInclude Include="VanaheimEngine.h" />
+    <ClInclude Include="InspectorUI.h" />
     <ClInclude Include="Window.h" />
   </ItemGroup>
   <ItemGroup>

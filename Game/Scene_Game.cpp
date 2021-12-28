@@ -6,7 +6,7 @@
 #include <RotateCameraCommand.h>
 
 #include <UIManager.h>
-#include <GeneratorUI.h>
+#include <InspectorUI.h>
 #include <Material_ProcGen.h>
 #include <TerrainGenerator.h>
 #include <GeneratorManager.h>
@@ -17,7 +17,7 @@
 
 Scene_Game::Scene_Game()
 		   : Scene()
-		   , m_NoiseGenSettings(0, 0, 0.f, 0.f, 0.f, { 0, 0 })
+		   , m_NoiseGenSettings(true, 0, 0, 0.f, 0.f, 0.f, { 0, 0 })
 		   , m_ProcGenSettings(0, 0, m_NoiseGenSettings)
 {}
 Scene_Game::~Scene_Game()
@@ -30,11 +30,6 @@ void Scene_Game::Initialize()
 
 	// Inputs
 	CreateInputs();
-
-	GeneratorManager* pGeneratorManager{ Locator::GetGeneratorManagerService() };
-	GeneratorUI* pGeneratorUI{ Locator::GetUIManagerService()->GetUI<GeneratorUI>() };
-	pGeneratorUI->AddObserver(pGeneratorManager->GetGenerator<NoiseGenerator>());
-	pGeneratorUI->AddObserver(pGeneratorManager->GetGenerator<TerrainGenerator>());
 
 	ActivateScene();
 	Scene::Initialize();
@@ -66,32 +61,14 @@ void Scene_Game::CreateMainCamera()
 	// Creating - Main camera
 	// **********************
 	const std::string name3{ "Camera-Main" };
-	const DirectX::XMFLOAT3 pos3{ 200, 100, -200 };
+	const DirectX::XMFLOAT3 pos3{ 300, 50, -650 };
 	CreateCamera(name3, pos3);
 }
 void Scene_Game::CreateLandscape()
 {
-	// **********************
-	// Creating - Landscape
-	// **********************
-	const int size{ 100 };
-	// Noise Generator settings
-	const size_t seed{ 1 };
-	const size_t octaves{ 5 };
-	const float lacunarity{ 2.3f };
-	const float persistence{ 0.448f };
-	const float scale{ 32.24f };
-	m_NoiseGenSettings = NoiseGenSettings{ seed, octaves, scale, lacunarity, persistence, {size, size} };
-
-	// Procedural Landscape Generator settings
-	const int xRes{ size };
-	const int zRes{ size };
-	m_ProcGenSettings = ProcGenSettings{ xRes, zRes, m_NoiseGenSettings };
-
 	// Generate landscape	
 	GeneratorManager* pGeneratorManager{ Locator::GetGeneratorManagerService() };
 	TerrainGenerator* pProcGen(pGeneratorManager->GetGenerator<TerrainGenerator>());
-	pProcGen->EditSettings(m_ProcGenSettings);
 	Mesh* pMesh{ pProcGen->CreateTerrain() };
 
 	// Model
@@ -100,9 +77,12 @@ void Scene_Game::CreateLandscape()
 	Texture* pColorTexture{ pResourceManager->LoadTexture("./Resources/Textures/Landscape/colorMap.bmp") };
 
 	UIManager* pUIManager{ Locator::GetUIManagerService() };
-	GeneratorUI* pGeneratorUI{ pUIManager->GetUI<GeneratorUI>() };
-	pGeneratorUI->AddObserver(pNormalTexture);
-	pGeneratorUI->AddObserver(pColorTexture);
+	InspectorUI* pVanaheimUI{ pUIManager->GetUI<InspectorUI>() };	
+	if (pVanaheimUI)
+	{
+		pVanaheimUI->AddObserver(pNormalTexture);
+		pVanaheimUI->AddObserver(pColorTexture);
+	}
 
 	Material_ProcGen* pMaterial = new Material_ProcGen();
 	pMaterial->AddTexture(pNormalTexture);

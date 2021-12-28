@@ -8,5 +8,10 @@ DemoUI::DemoUI(const bool showDemo, const std::string& windowName, const DirectX
 
 void DemoUI::ShowWindow()
 {
+	if (!m_RenderUI)
+		return;
+
+	CreateWindowBase();
 	ImGui::ShowDemoWindow(&m_ShowDemo);
+	EndWindowBase();
 }

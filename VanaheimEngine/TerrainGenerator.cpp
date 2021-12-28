@@ -76,14 +76,14 @@ void TerrainGenerator::GenerateColorMap(const std::vector<std::vector<float>>& n
 
 void TerrainGenerator::onNotify(ObserverEvent event)
 {
-	if (event == ObserverEvent::INCREASE_XRES)
+	/*if (event == ObserverEvent::INCREASE_XRES)
 		m_Settings.xRes++;
 	if (event == ObserverEvent::DECREASE_XRES)
 		m_Settings.xRes--;
 	if (event == ObserverEvent::INCREASE_ZRES)
 		m_Settings.zRes++;
 	if (event == ObserverEvent::DECREASE_ZRES)
-		m_Settings.zRes--;
+		m_Settings.zRes--;*/
 
 	if (event == ObserverEvent::REBUILD_LANDSCAPE)
 		GenerateColorMap(m_pNoiseGenerator->GetNoiseMap());
@@ -148,21 +148,21 @@ void TerrainGenerator::CreateIndices()
 
 void TerrainGenerator::CreateUIData()
 {
-	// Inspector
-	std::vector<ObserverEvent> events_xRes{};
-	events_xRes.push_back(ObserverEvent::DECREASE_XRES);
-	events_xRes.push_back(ObserverEvent::INCREASE_XRES);
-	events_xRes.push_back(ObserverEvent::INCREASE_XRES);
+	//// Inspector
+	//std::vector<ObserverEvent> events_xRes{};
+	//events_xRes.push_back(ObserverEvent::DECREASE_XRES);
+	//events_xRes.push_back(ObserverEvent::INCREASE_XRES);
+	//events_xRes.push_back(ObserverEvent::INCREASE_XRES);
 
-	std::vector<ObserverEvent> events_zRes{};
-	events_zRes.push_back(ObserverEvent::DECREASE_ZRES);
-	events_zRes.push_back(ObserverEvent::INCREASE_ZRES);
+	//std::vector<ObserverEvent> events_zRes{};
+	//events_zRes.push_back(ObserverEvent::DECREASE_ZRES);
+	//events_zRes.push_back(ObserverEvent::INCREASE_ZRES);
 
-	const GeneratorVariable iv_xRes(GeneratorType::PROCEDURAL_GENERATION, UIButtonType::SLIDER_INT, "xRes", events_xRes, { 20, 1000 });
-	const GeneratorVariable iv_zRes(GeneratorType::PROCEDURAL_GENERATION, UIButtonType::SLIDER_INT, "zRes", events_zRes, { 20, 1000 });
+	//const GeneratorVariable iv_xRes(GeneratorType::PROCEDURAL_GENERATION, UIButtonType::SLIDER_INT, "xRes", events_xRes, { 20, 1000 });
+	//const GeneratorVariable iv_zRes(GeneratorType::PROCEDURAL_GENERATION, UIButtonType::SLIDER_INT, "zRes", events_zRes, { 20, 1000 });
 
-	UIManager* pUIManager{ Locator::GetUIManagerService() };
-	GeneratorUI* pGenUI{ pUIManager->GetUI<GeneratorUI>() };
-	pGenUI->StoreVariable(iv_xRes);
-	pGenUI->StoreVariable(iv_zRes);
+	//UIManager* pUIManager{ Locator::GetUIManagerService() };
+	//GeneratorUI* pGenUI{ pUIManager->GetUI<GeneratorUI>() };
+	//pGenUI->StoreVariable(iv_xRes);
+	//pGenUI->StoreVariable(iv_zRes);
 }

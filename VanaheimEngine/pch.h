@@ -37,6 +37,8 @@
 // Vanaheim includes
 // ----------------------------
 #include "Locator.h"
+
+#include "ConsoleUI.h"
 #include "DebugLogger.h"
 
 #include "UIComponent.h"
@@ -89,10 +91,10 @@ struct Vertex_Input
 
 	bool operator==(const Vertex_Input& v)
 	{
-		if (v.Position.x == Position.x && 
-			v.Position.y == Position.y && 
+		if (v.Position.x == Position.x &&
+			v.Position.y == Position.y &&
 			v.Position.z == Position.z)
-					return true;
+			return true;
 		return false;
 	}
 };

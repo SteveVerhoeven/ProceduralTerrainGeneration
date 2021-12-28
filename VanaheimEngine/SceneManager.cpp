@@ -73,11 +73,8 @@ void SceneManager::Render()
 
 	for (Scene* pScene : m_pGameScenes)
 		pScene->Render();
-
-	
-	pUIManager->GetUI<GeneratorUI>()->ShowWindow();
-	pUIManager->GetUI<DemoUI>()->ShowWindow();
-	
+		
+	pUIManager->Render();	
 	pUIManager->EndFrame();
 	pGraphics->PresentBackbuffer();
 }

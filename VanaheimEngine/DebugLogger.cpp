@@ -1,6 +1,9 @@
 #include "pch.h"
 #include "DebugLogger.h"
 
+#include "UIManager.h"
+#include "ConsoleUI.h"
+
 #include <string>
 #if defined(DEBUG) || defined(_DEBUG)
 #include <dxerr.h>
@@ -15,6 +18,8 @@ void DebugLogger::Log(const ErrorLevel& errorLevel, const std::string& message)
 {
 	const std::string outputMessage{ OutputMessageToConsole(errorLevel, message) };
 	OutputMessageBox(errorLevel, outputMessage);
+
+	Locator::GetUIManagerService()->GetUI<ConsoleUI>()->Log(outputMessage);
 }
 void DebugLogger::LogHRESULT(HRESULT hr, const std::string& functionName, const std::string& file, const std::string& line)
 {

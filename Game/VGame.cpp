@@ -3,6 +3,9 @@
 
 #include <SceneManager.h>
 #include "Scene_Game.h"
+#include <GeneratorManager.h>
+#include <NoiseGenerator.h>
+
 
 VGame::VGame(const std::string& name)
 	: Game(name)
@@ -21,4 +24,8 @@ void VGame::PostInitialize()
 {
 	SceneManager* pSceneManager{ Locator::GetSceneManagerService() };
 	pSceneManager->PostInitialize();
+
+	GeneratorManager* pGeneratorManager{ Locator::GetGeneratorManagerService() };
+	NoiseGenerator* pNoiseGenerator{ pGeneratorManager->GetGenerator<NoiseGenerator>() };
+	pNoiseGenerator->PostInitialize();
 }

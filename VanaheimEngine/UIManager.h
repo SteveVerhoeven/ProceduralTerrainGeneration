@@ -1,6 +1,8 @@
 #pragma once
 
 class UI;
+class Window;
+class Graphics;
 class UIManager final
 {
 	public:
@@ -13,6 +15,7 @@ class UIManager final
 		UIManager& operator=(UIManager&&) noexcept = delete;
 
 		void BeginFrame();
+		void Render();
 		void EndFrame();
 
 		void AddUI(UI* pUI) { m_pUIs.push_back(pUI); }

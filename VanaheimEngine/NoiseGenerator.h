@@ -13,16 +13,19 @@ class NoiseGenerator final : public Generator
 		NoiseGenerator& operator=(NoiseGenerator&&) noexcept = delete;
 
 		void Initialize();
+		void PostInitialize();
+
+		// General
+		const std::vector<std::vector<float>>& GetNoiseMap() const { return m_NoiseMap; }
 
 		// Generating
-		std::vector<std::vector<float>> GenerateNoiseMap(const DirectX::XMFLOAT3 & personalOffset);
+		const std::vector<std::vector<float>>& GenerateNoiseMap(const DirectX::XMFLOAT3 & personalOffset);
 
 		// Settings
 		void EditSettings(NoiseGenSettings & settings);
-		NoiseGenSettings GetNoiseGenSettings() const { return m_Settings; }
+		NoiseGenSettings* GetNoiseGenSettings() { return &m_Settings; }
 
-		// General
-		std::vector<std::vector<float>> GetNoiseMap() const { return m_NoiseMap; }
+		// UI
 		template<typename T>
 		T GetValueByName(const std::string & name) const;
 

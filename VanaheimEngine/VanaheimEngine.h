@@ -35,6 +35,7 @@ class VanaheimEngine final
 		GeneratorManager* m_pGeneratorManager;
 
 		void InitializeLocator();
+		void InitializeEngineUI();
 
 		void Render();
 };

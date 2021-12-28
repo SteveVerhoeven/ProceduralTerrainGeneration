@@ -5,7 +5,9 @@
 #include "GeneratorManager.h"
 
 #include "UIManager.h"
-#include "GeneratorUI.h"
+#include "InspectorUI.h"
+#include "ConsoleUI.h"
+#include "UIData.h"
 
 NoiseGenerator::NoiseGenerator()
 			   : Generator("NoiseGenerator")
@@ -16,6 +18,7 @@ NoiseGenerator::NoiseGenerator()
 {
 	Initialize();
 }
+
 void NoiseGenerator::Initialize()
 {
 	// Hash lookup table as defined by Ken Perlin.  This is a randomly
@@ -38,12 +41,14 @@ void NoiseGenerator::Initialize()
 	const int doubleHashtableSize{ 512 };
 	for (int i = 0; i < doubleHashtableSize; ++i)
 		m_Permutation[i] = m_HashTable[i % 256];
-
+}
+void NoiseGenerator::PostInitialize()
+{
 	CreateUIData();
 }
 
 // Generating
-std::vector<std::vector<float>> NoiseGenerator::GenerateNoiseMap(const DirectX::XMFLOAT3& personalOffset)
+const std::vector<std::vector<float>>& NoiseGenerator::GenerateNoiseMap(const DirectX::XMFLOAT3& personalOffset)
 {
 	// Check if the scale is lower then or equal to zero to prevent division by 0
 	if (!Validate(m_Settings.mapSize, m_Settings.scale))
@@ -84,30 +89,11 @@ void NoiseGenerator::EditSettings(NoiseGenSettings& settings)
 
 void NoiseGenerator::onNotify(ObserverEvent event)
 {
-	if (event == ObserverEvent::INCREASE_SEED)
-		m_Settings.seed++;
-	else if (event == ObserverEvent::DECREASE_SEED)
-		m_Settings.seed--;
-	else if (event == ObserverEvent::INCREASE_OCTAVES)
-		m_Settings.octaves++;
-	else if (event == ObserverEvent::DECREASE_OCTAVES)
-		m_Settings.octaves--;
-	else if (event == ObserverEvent::INCREASE_SCALE)
-		m_Settings.scale += 20.f;
-	else if (event == ObserverEvent::DECREASE_SCALE)
-		m_Settings.scale -= 1.f;
-	else if (event == ObserverEvent::INCREASE_LACUNARITY)
-		m_Settings.lacunarity += 0.1f;
-	else if (event == ObserverEvent::DECREASE_LACUNARITY)
-		m_Settings.lacunarity -= 0.1f;
-	else if (event == ObserverEvent::INCREASE_PERSISTENCE)
-		m_Settings.persistence += 0.1f;
-	else if (event == ObserverEvent::DECREASE_PERSISTENCE)
-		m_Settings.persistence -= 0.1f;
-
 	if (event == ObserverEvent::REBUILD_LANDSCAPE)
 	{
 		GenerateNoiseMap({ 0,0,0 });
+		const std::string message{ "Seed: " + std::to_string(m_Settings.seed)};
+		Locator::GetUIManagerService()->GetUI<ConsoleUI>()->Log(message);
 		//Locator::GetGeneratorManagerService()->GetGenerator<TerrainGenerator>()->GenerateColorMap(m_NoiseMap);
 	}
 }
@@ -131,40 +117,67 @@ bool NoiseGenerator::Validate(DirectX::XMFLOAT2& mapSize, float& scale)
 }
 void NoiseGenerator::CreateUIData()
 {
-	// Inspector
-	std::vector<ObserverEvent> events_scale{};
-	events_scale.push_back(ObserverEvent::DECREASE_SCALE);
-	events_scale.push_back(ObserverEvent::INCREASE_SCALE);
+	//// Inspector
+	//std::vector<ObserverEvent> events_scale{};
+	//events_scale.push_back(ObserverEvent::DECREASE_SCALE);
+	//events_scale.push_back(ObserverEvent::INCREASE_SCALE);
+	//std::vector<ObserverEvent> events_seed{};
+	//events_seed.push_back(ObserverEvent::DECREASE_SEED);
+	//events_seed.push_back(ObserverEvent::INCREASE_SEED);
+	//std::vector<ObserverEvent> events_octaves{};
+	//events_octaves.push_back(ObserverEvent::DECREASE_OCTAVES);
+	//events_octaves.push_back(ObserverEvent::INCREASE_OCTAVES);
+	//std::vector<ObserverEvent> events_lacunarity{};
+	//events_lacunarity.push_back(ObserverEvent::DECREASE_LACUNARITY);
+	//events_lacunarity.push_back(ObserverEvent::INCREASE_LACUNARITY);
+	//std::vector<ObserverEvent> events_persistence{};
+	//events_persistence.push_back(ObserverEvent::DECREASE_PERSISTENCE);
+	//events_persistence.push_back(ObserverEvent::INCREASE_PERSISTENCE);
+	//const GeneratorVariable iv_scale(GeneratorType::NOISE, UIButtonType::SLIDER_FLOAT, "Scale", events_scale, { 0, 100 });
+	//const GeneratorVariable iv_seed(GeneratorType::NOISE, UIButtonType::SLIDER_INT, "Seed", events_seed, { 0, 10 });
+	//const GeneratorVariable iv_octaves(GeneratorType::NOISE, UIButtonType::SLIDER_INT, "Octaves", events_octaves, { 1, 8 });
+	//const GeneratorVariable iv_lacunarity(GeneratorType::NOISE, UIButtonType::SLIDER_FLOAT, "Lacunarity", events_lacunarity, { 1, 10 });
+	//const GeneratorVariable iv_persistence(GeneratorType::NOISE, UIButtonType::SLIDER_FLOAT, "Persistence", events_persistence, { 0, 1 });
+	//UIManager* pUIManager{ Locator::GetUIManagerService() };
+	//GeneratorUI* pGenUI{ pUIManager->GetUI<GeneratorUI>() };
+	//pGenUI->StoreVariable(iv_scale);
+	//pGenUI->StoreVariable(iv_seed);
+	//pGenUI->StoreVariable(iv_octaves);
+	//pGenUI->StoreVariable(iv_lacunarity);
+	//pGenUI->StoreVariable(iv_persistence);
 
-	std::vector<ObserverEvent> events_seed{};
-	events_seed.push_back(ObserverEvent::DECREASE_SEED);
-	events_seed.push_back(ObserverEvent::INCREASE_SEED);
+	STInspectorVariable* InspectorVarSeed{ new STInspectorVariable() };
+	STInspectorVariable* InspectorVarOctaves{ new STInspectorVariable() };
+	FInspectorVariable* InspectorVarLacunarity{ new FInspectorVariable() };
+	FInspectorVariable* InspectorVarScale{ new FInspectorVariable() };
+	FInspectorVariable* InspectorVarPersistence{ new FInspectorVariable() };
 
-	std::vector<ObserverEvent> events_octaves{};
-	events_octaves.push_back(ObserverEvent::DECREASE_OCTAVES);
-	events_octaves.push_back(ObserverEvent::INCREASE_OCTAVES);
-
-	std::vector<ObserverEvent> events_lacunarity{};
-	events_lacunarity.push_back(ObserverEvent::DECREASE_LACUNARITY);
-	events_lacunarity.push_back(ObserverEvent::INCREASE_LACUNARITY);
-
-	std::vector<ObserverEvent> events_persistence{};
-	events_persistence.push_back(ObserverEvent::DECREASE_PERSISTENCE);
-	events_persistence.push_back(ObserverEvent::INCREASE_PERSISTENCE);
-
-	const GeneratorVariable iv_scale(GeneratorType::NOISE, UIButtonType::SLIDER_FLOAT, "Scale", events_scale, { 0, 100 });
-	const GeneratorVariable iv_seed(GeneratorType::NOISE, UIButtonType::SLIDER_INT, "Seed", events_seed, { 0, 10 });
-	const GeneratorVariable iv_octaves(GeneratorType::NOISE, UIButtonType::SLIDER_INT, "Octaves", events_octaves, { 1, 8 });
-	const GeneratorVariable iv_lacunarity(GeneratorType::NOISE, UIButtonType::SLIDER_FLOAT, "Lacunarity", events_lacunarity, { 1, 10 });
-	const GeneratorVariable iv_persistence(GeneratorType::NOISE, UIButtonType::SLIDER_FLOAT, "Persistence", events_persistence, { 0, 1 });
+	InspectorVarSeed->name = "Seed";
+	InspectorVarSeed->value = &m_Settings.seed;
+	InspectorVarSeed->varRange = { 0, 1000 };
+	InspectorVarOctaves->name = "Octaves";
+	InspectorVarOctaves->value = &m_Settings.octaves;
+	InspectorVarOctaves->varRange = { 1, 8 };
+	InspectorVarLacunarity->name = "Lacunarity";
+	InspectorVarLacunarity->value = &m_Settings.lacunarity;
+	InspectorVarLacunarity->varRange = { 1, 10 };
+	InspectorVarScale->name = "Scale";
+	InspectorVarScale->value = &m_Settings.scale;
+	InspectorVarScale->varRange = { 0, 100 };
+	InspectorVarPersistence->name = "Persistence";
+	InspectorVarPersistence->value = &m_Settings.persistence;
+	InspectorVarPersistence->varRange = { 0, 1 };
 
 	UIManager* pUIManager{ Locator::GetUIManagerService() };
-	GeneratorUI* pGenUI{ pUIManager->GetUI<GeneratorUI>() };
-	pGenUI->StoreVariable(iv_scale);
-	pGenUI->StoreVariable(iv_seed);
-	pGenUI->StoreVariable(iv_octaves);
-	pGenUI->StoreVariable(iv_lacunarity);
-	pGenUI->StoreVariable(iv_persistence);
+	InspectorUI* pVanaheimUI{ pUIManager->GetUI<InspectorUI>() };
+	if (pVanaheimUI)
+	{
+		pVanaheimUI->StoreVariable(InspectorVarSeed);
+		pVanaheimUI->StoreVariable(InspectorVarOctaves);
+		pVanaheimUI->StoreVariable(InspectorVarLacunarity);
+		pVanaheimUI->StoreVariable(InspectorVarScale);
+		pVanaheimUI->StoreVariable(InspectorVarPersistence);
+	}
 }
 
 // Fractal Noise

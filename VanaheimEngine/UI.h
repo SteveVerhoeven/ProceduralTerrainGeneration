@@ -24,13 +24,19 @@ class UI : public Subject
 		UI(UI&&) = delete;
 		UI& operator=(UI&&) = delete;
 
+		void ActivateUI() { m_RenderUI = true; }
+		void DeactivateUI() { m_RenderUI = false; }
+
+		virtual void ShowWindow() = 0;
+
 	protected:
+		bool m_RenderUI;
 		std::string m_Name;
 		DirectX::XMFLOAT2 m_Position;
 		DirectX::XMFLOAT2 m_Size;
-		
-		virtual void ShowWindow() = 0;
 
-	private:
+		void CreateWindowBase();
+		void EndWindowBase();
 		
+	private:
 };

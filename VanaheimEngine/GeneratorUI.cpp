@@ -12,14 +12,7 @@ GeneratorUI::GeneratorUI(const std::string& windowName, const DirectX::XMFLOAT2&
 
 void GeneratorUI::ShowWindow()
 {
-	bool windowActive = true;
-	ImGui::SetNextWindowPos(ImVec2(m_Position.x, m_Position.y));
-	ImGui::SetNextWindowSize(ImVec2(m_Size.x, m_Size.y));
-	ImGuiWindowFlags window_flags = 0;
-
-	ImGui::Begin(m_Name.c_str(), &windowActive, window_flags);
-	ImGui::PushAllowKeyboardFocus(false);
-	ImGui::SetWindowFocus();
+	CreateWindowBase();
 
 	ImGui::Text("VARIABLES");
 	ImGui::Indent();
@@ -39,9 +32,7 @@ void GeneratorUI::ShowWindow()
 	ImGui::Text("%.1f FPS", ImGui::GetIO().Framerate);
 	ImGui::Unindent();
 
-	//End
-	ImGui::PopAllowKeyboardFocus();
-	ImGui::End();
+	EndWindowBase();
 }
 
 void GeneratorUI::DisplayVariables()
