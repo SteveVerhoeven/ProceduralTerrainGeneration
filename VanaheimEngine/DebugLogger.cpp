@@ -11,7 +11,7 @@
 
 void DebugLogger::Initialize()
 {
-	//CreateConsoleWindow();
+	CreateConsoleWindow();
 }
 
 void DebugLogger::Log(const ErrorLevel& errorLevel, const std::string& message)

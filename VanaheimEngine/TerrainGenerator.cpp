@@ -37,10 +37,10 @@ Mesh* TerrainGenerator::CreateTerrain()
 	const std::vector<std::vector<float>> noiseMap = m_pNoiseGenerator->GenerateNoiseMap({0,0,0});
 	GenerateColorMap(noiseMap);
 
-	//CreateVertices();
-	//CreateIndices();
+	CreateVertices();
+	CreateIndices();
 	
-	CreateVoxels();
+	//CreateVoxels();
 
 	Mesh* pMesh{ new Mesh() };
 	pMesh->Initialize(m_Vertices, m_Indices);
@@ -116,8 +116,8 @@ void TerrainGenerator::CreateIndices()
 	{
 		for (int x{}; x < width; ++x)
 		{
-			/*if (x < width - 1 && z < height - 1)
-			{*/
+			if (x < width - 1 && z < height - 1)
+			{
 				// i		 i + 1
 				// +---------+
 				// |         |
@@ -133,8 +133,8 @@ void TerrainGenerator::CreateIndices()
 				m_Indices.push_back(vertexIndex + width + 1);
 				m_Indices.push_back(vertexIndex);
 				m_Indices.push_back(vertexIndex + 1);
-			/*}
-			vertexIndex++;*/
+			}
+			vertexIndex++;
 		}
 	}
 }
