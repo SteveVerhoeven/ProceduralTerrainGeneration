@@ -19,8 +19,8 @@ class InspectorUI final : public UI
 		void ShowWindow() override;
 	
 	private:
-		void SetPositionAndSize();
 		std::vector<InspectorVariable*> m_Variables;
-
+		
+		void SetPositionAndSize();
 		void DisplayInspectorVariables();
 };

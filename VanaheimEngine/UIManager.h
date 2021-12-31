@@ -3,6 +3,7 @@
 class UI;
 class Window;
 class Graphics;
+
 class UIManager final
 {
 	public:

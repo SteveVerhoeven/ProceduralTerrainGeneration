@@ -11,6 +11,7 @@
 
 InspectorUI::InspectorUI()
 		   : UI("Inspector", DirectX::XMFLOAT2{ 0.f, 0.f }, DirectX::XMFLOAT2{ 0.f, 0.f })
+		   , m_Variables(std::vector<InspectorVariable*>())
 {
 	SetPositionAndSize();
 }
@@ -61,20 +62,44 @@ void InspectorUI::SetPositionAndSize()
 void InspectorUI::DisplayInspectorVariables()
 {
 	const size_t nbrOfVariables{ m_Variables.size() };
+	if (nbrOfVariables <= 0)
+		return;
+
+	STInspectorVariable* varST{ nullptr };
+	FInspectorVariable* varF{ nullptr };
+	BInspectorVariable* varB{ nullptr };
+
 	for (size_t i{}; i < nbrOfVariables; ++i)
 	{
 		InspectorVariable* variable{ m_Variables[i] };
-		FInspectorVariable* varF{ dynamic_cast<FInspectorVariable*>(variable) };
+
+		varF = dynamic_cast<FInspectorVariable*>(variable);
 		if (varF)
 		{
 			if (ImGui::SliderFloat(varF->name.c_str(), varF->value, varF->varRange.x, varF->varRange.y, "ratio = %.1f"))
 				Notify(ObserverEvent::REBUILD_LANDSCAPE);
+
+			continue;
 		}
-		else
+
+		varST = dynamic_cast<STInspectorVariable*>(variable);
+		if (varST)
 		{
-			STInspectorVariable* varST{ dynamic_cast<STInspectorVariable*>(variable) };
 			if (ImGui::SliderInt(varST->name.c_str(), (int*)varST->value, int(varST->varRange.x), int(varST->varRange.y), "ratio = %d"))
 				Notify(ObserverEvent::REBUILD_LANDSCAPE);
+
+			continue;
+		}
+
+		varB = dynamic_cast<BInspectorVariable*>(variable);
+		if (varB)
+		{
+			if (ImGui::Checkbox(varB->name.c_str(), varB->value))
+			{
+				Notify(ObserverEvent::REBUILD_LANDSCAPE);
+			}
+
+			continue;
 		}
 		
 	}

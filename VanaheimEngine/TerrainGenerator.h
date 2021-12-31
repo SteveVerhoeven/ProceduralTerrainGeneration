@@ -56,15 +56,16 @@ class TerrainGenerator final : public Generator
 		void CreateUIData();
 		
 		// Voxels
+		void CreateVoxel(const DirectX::XMFLOAT3& position, const DirectX::XMFLOAT2& size, const float bottomModifier = 0.f);
 		void CreateVoxels();
 		void CreateVoxelIndices();
 
-		void CreateFrontFace(const int x, const int z, const int width, const int height);
-		void CreateLeftFace(const int x, const int z, const int width, const int height);
-		void CreateRightFace(const int x, const int z, const int width, const int height);
-		void CreateBottomFace(const int x, const int z, const int width, const int height);
-		void CreateTopFace(const int x, const int z, const int width, const int height);
-		void CreateBackFace(const int x, const int z, const int width, const int height);
+		void CreateFrontFace(const DirectX::XMFLOAT3& position, const DirectX::XMFLOAT2& size, const float bottomModifier = 0.f);
+		void CreateLeftFace(const DirectX::XMFLOAT3& position, const DirectX::XMFLOAT2& size, const float bottomModifier = 0.f);
+		void CreateRightFace(const DirectX::XMFLOAT3& position, const DirectX::XMFLOAT2& size, const float bottomModifier = 0.f);
+		void CreateBottomFace(const DirectX::XMFLOAT3& position, const DirectX::XMFLOAT2& size, const float bottomModifier = 0.f);
+		void CreateTopFace(const DirectX::XMFLOAT3& position, const DirectX::XMFLOAT2& size);
+		void CreateBackFace(const DirectX::XMFLOAT3& position, const DirectX::XMFLOAT2& size, const float bottomModifier = 0.f);
 
 };
 

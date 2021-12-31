@@ -51,8 +51,8 @@ void Window::CreateShowWindow()
 	LPCSTR    lpClassName = m_pName;
 	LPCSTR    lpWindowName = m_pName;
 	DWORD     dwStyle = WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU;
-	int       X = 200;
-	int       Y = 200;
+	int       X = 100;
+	int       Y = 50;
 	int       nWidth = m_Width;
 	int       nHeight = m_Height;
 	HWND      hWndParent = nullptr;
@@ -62,7 +62,7 @@ void Window::CreateShowWindow()
 	m_Window = CreateWindowEx(dwExStyle, lpClassName, lpWindowName, dwStyle, X, Y, nWidth, nHeight, hWndParent, hMenu, hInst, lpParam);
 
 	// ShowWindow - Reference: https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-showwindow
-	ShowWindow(m_Window, SW_SHOWMAXIMIZED);
+	ShowWindow(m_Window, SW_SHOWNORMAL);
 }
 
 LRESULT Window::WindowProcedureStatic(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
@@ -89,18 +89,32 @@ LRESULT Window::WindowProcedureStatic(HWND hWnd, UINT msg, WPARAM wParam, LPARAM
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 LRESULT Window::WindowProcedure(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
+	/*if (ImGui_ImplWin32_WndProcHandler(hWnd, msg, wParam, lParam))
+		return true;*/
+
+	//// Messages - Reference: https://wiki.winehq.org/List_Of_Windows_Messages
+	//switch (msg)
+	//{
+	//	case WM_CLOSE:
+	//		PostQuitMessage(0);
+	//		break;		
+	//	default:
+	//		break;
+	//}
+
+	//return DefWindowProc(hWnd, msg, wParam, lParam);
+
 	if (ImGui_ImplWin32_WndProcHandler(hWnd, msg, wParam, lParam))
 		return true;
-
-	// Messages - Reference: https://wiki.winehq.org/List_Of_Windows_Messages
 	switch (msg)
 	{
-		case WM_CLOSE:
-			PostQuitMessage(0);
-			break;		
-		default:
+		case WM_SYSCOMMAND:
+			if ((wParam & 0xfff0) == SC_KEYMENU) // Disable ALT application menu
+				return 0;
 			break;
+		case WM_DESTROY:
+			::PostQuitMessage(0);
+			return 0;
 	}
-
-	return DefWindowProc(hWnd, msg, wParam, lParam);
+	return ::DefWindowProc(hWnd, msg, wParam, lParam);
 }

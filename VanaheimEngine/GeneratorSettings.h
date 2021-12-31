@@ -39,17 +39,20 @@ struct NoiseGenSettings
 struct ProcGenSettings
 {
 	ProcGenSettings()
-		: ProcGenSettings(400, 400, NoiseGenSettings(true, 1, 5, 32.24f, 2.3f, 0.448f, { 400, 400 }))
+		: ProcGenSettings(400, -20, 400, NoiseGenSettings(true, 1, 5, 32.24f, 2.3f, 0.448f, { 400, 400 }))
 	{}
 	ProcGenSettings(const int xRes,
+					const int yRes,
 					const int zRes,
 					const NoiseGenSettings& noiseSetting)
 					: xRes(xRes)
+					, yRes(yRes)
 					, zRes(zRes)
 					, noiseGenSettings(noiseSetting)
 	{}
 
 	int xRes;
+	int yRes;
 	int	zRes;
 	NoiseGenSettings noiseGenSettings;
 };

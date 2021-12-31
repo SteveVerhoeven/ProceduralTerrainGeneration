@@ -170,7 +170,7 @@ void NoiseGenerator::CreateUIData()
 
 	UIManager* pUIManager{ Locator::GetUIManagerService() };
 	InspectorUI* pVanaheimUI{ pUIManager->GetUI<InspectorUI>() };
-	if (pVanaheimUI)
+	if (pVanaheimUI )
 	{
 		pVanaheimUI->StoreVariable(InspectorVarSeed);
 		pVanaheimUI->StoreVariable(InspectorVarOctaves);

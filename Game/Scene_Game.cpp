@@ -18,7 +18,7 @@
 Scene_Game::Scene_Game()
 		   : Scene()
 		   , m_NoiseGenSettings(true, 0, 0, 0.f, 0.f, 0.f, { 0, 0 })
-		   , m_ProcGenSettings(0, 0, m_NoiseGenSettings)
+		   , m_ProcGenSettings(0, 0, 0, m_NoiseGenSettings)
 {}
 Scene_Game::~Scene_Game()
 {}
