@@ -6,10 +6,15 @@ enum class FallOffType : int
 	RoundedSquare = 2
 };
 
+const int generalSize{ 100 };
+const int terrain_X{ generalSize };
+const int terrain_Y{ 50 };
+const int terrain_Z{ generalSize };
+
 struct NoiseGenSettings
 {
 	NoiseGenSettings()
-		: NoiseGenSettings(true, 1, 5, 32.24f, 2.3f, 0.448f, { 400, 400 })
+		: NoiseGenSettings(true, 1, 5, 32.24f, 2.3f, 0.448f, { terrain_X, terrain_Z })
 	{}
 	NoiseGenSettings(const bool addToInspector,
 					 const size_t seed,
@@ -39,7 +44,7 @@ struct NoiseGenSettings
 struct ProcGenSettings
 {
 	ProcGenSettings()
-		: ProcGenSettings(400, -20, 400, NoiseGenSettings(true, 1, 5, 32.24f, 2.3f, 0.448f, { 400, 400 }))
+		: ProcGenSettings(terrain_X, -terrain_Y, terrain_Z, NoiseGenSettings(true, 1, 5, 32.24f, 2.3f, 0.448f, { terrain_X, terrain_Z }))
 	{}
 	ProcGenSettings(const int xRes,
 					const int yRes,

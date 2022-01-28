@@ -12,13 +12,27 @@ class ConsoleUI final : public UI
 		ConsoleUI(ConsoleUI&&) = delete;
 		ConsoleUI& operator=(ConsoleUI&&) = delete;
 
-		void Log(const std::string& consoleMessage) { m_ConsoleMessages.push_back(consoleMessage); }
+		void Log(const std::string& consoleMessage) 
+		{ 
+			//if (m_ConsoleMessages.size() >= 25)
+			//	m_ConsoleMessages.clear();
+			//m_ConsoleMessages.push_back(consoleMessage); 
+
+			m_ConsoleMessages[m_CurrentConsoleSize++] = consoleMessage;
+			if (m_CurrentConsoleSize >= m_MaxConsoleSize)
+				m_CurrentConsoleSize = 0;
+		}
 
 	protected:
 		void ShowWindow() override;
 
 	private:
+		static const int m_MaxConsoleSize = 25;
+		int m_CurrentConsoleSize;
+		//std::vector<std::string> m_ConsoleMessages;
+		std::string m_ConsoleMessages[m_MaxConsoleSize] ;
+
 		void SetPositionAndSize();
 
-		std::vector<std::string> m_ConsoleMessages;
+
 };

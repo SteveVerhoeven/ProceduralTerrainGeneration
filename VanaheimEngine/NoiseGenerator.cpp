@@ -63,7 +63,7 @@ const std::vector<std::vector<float>>& NoiseGenerator::GenerateNoiseMap(const Di
 
 	// recalculate the noise
 	if (m_NoiseMap.empty())
-		CalculateFractalNoises(offsets);
+		CalculateNoises(offsets);
 	else
 		RecalculateFractalNoises(offsets);
 
@@ -76,24 +76,13 @@ const std::vector<std::vector<float>>& NoiseGenerator::GenerateNoiseMap(const Di
 	return m_NoiseMap;
 }
 
-// Settings
-void NoiseGenerator::EditSettings(NoiseGenSettings& settings)
-{
-	m_Settings.seed = settings.seed;
-	m_Settings.octaves = settings.octaves;
-	m_Settings.lacunarity = settings.lacunarity;
-	m_Settings.persistence = settings.persistence;
-	m_Settings.mapSize = settings.mapSize;
-	m_Settings.scale = settings.scale;
-}
-
 void NoiseGenerator::onNotify(ObserverEvent event)
 {
 	if (event == ObserverEvent::REBUILD_LANDSCAPE)
 	{
 		GenerateNoiseMap({ 0,0,0 });
 		const std::string message{ "Seed: " + std::to_string(m_Settings.seed)};
-		Locator::GetUIManagerService()->GetUI<ConsoleUI>()->Log(message);
+		LOG(ErrorLevel::LOG_INFO, message);
 		//Locator::GetGeneratorManagerService()->GetGenerator<TerrainGenerator>()->GenerateColorMap(m_NoiseMap);
 	}
 }
@@ -117,35 +106,6 @@ bool NoiseGenerator::Validate(DirectX::XMFLOAT2& mapSize, float& scale)
 }
 void NoiseGenerator::CreateUIData()
 {
-	//// Inspector
-	//std::vector<ObserverEvent> events_scale{};
-	//events_scale.push_back(ObserverEvent::DECREASE_SCALE);
-	//events_scale.push_back(ObserverEvent::INCREASE_SCALE);
-	//std::vector<ObserverEvent> events_seed{};
-	//events_seed.push_back(ObserverEvent::DECREASE_SEED);
-	//events_seed.push_back(ObserverEvent::INCREASE_SEED);
-	//std::vector<ObserverEvent> events_octaves{};
-	//events_octaves.push_back(ObserverEvent::DECREASE_OCTAVES);
-	//events_octaves.push_back(ObserverEvent::INCREASE_OCTAVES);
-	//std::vector<ObserverEvent> events_lacunarity{};
-	//events_lacunarity.push_back(ObserverEvent::DECREASE_LACUNARITY);
-	//events_lacunarity.push_back(ObserverEvent::INCREASE_LACUNARITY);
-	//std::vector<ObserverEvent> events_persistence{};
-	//events_persistence.push_back(ObserverEvent::DECREASE_PERSISTENCE);
-	//events_persistence.push_back(ObserverEvent::INCREASE_PERSISTENCE);
-	//const GeneratorVariable iv_scale(GeneratorType::NOISE, UIButtonType::SLIDER_FLOAT, "Scale", events_scale, { 0, 100 });
-	//const GeneratorVariable iv_seed(GeneratorType::NOISE, UIButtonType::SLIDER_INT, "Seed", events_seed, { 0, 10 });
-	//const GeneratorVariable iv_octaves(GeneratorType::NOISE, UIButtonType::SLIDER_INT, "Octaves", events_octaves, { 1, 8 });
-	//const GeneratorVariable iv_lacunarity(GeneratorType::NOISE, UIButtonType::SLIDER_FLOAT, "Lacunarity", events_lacunarity, { 1, 10 });
-	//const GeneratorVariable iv_persistence(GeneratorType::NOISE, UIButtonType::SLIDER_FLOAT, "Persistence", events_persistence, { 0, 1 });
-	//UIManager* pUIManager{ Locator::GetUIManagerService() };
-	//GeneratorUI* pGenUI{ pUIManager->GetUI<GeneratorUI>() };
-	//pGenUI->StoreVariable(iv_scale);
-	//pGenUI->StoreVariable(iv_seed);
-	//pGenUI->StoreVariable(iv_octaves);
-	//pGenUI->StoreVariable(iv_lacunarity);
-	//pGenUI->StoreVariable(iv_persistence);
-
 	STInspectorVariable* InspectorVarSeed{ new STInspectorVariable() };
 	STInspectorVariable* InspectorVarOctaves{ new STInspectorVariable() };
 	FInspectorVariable* InspectorVarLacunarity{ new FInspectorVariable() };
@@ -193,7 +153,7 @@ void NoiseGenerator::GenerateOffsets(std::vector<DirectX::XMFLOAT3>& offsets, co
 		offsets.push_back(offset);
 	}
 }
-void NoiseGenerator::CalculateFractalNoises(const std::vector<DirectX::XMFLOAT3>& offsets)
+void NoiseGenerator::CalculateNoises(const std::vector<DirectX::XMFLOAT3>& offsets)
 {
 	for (size_t y{}; y < m_Settings.mapSize.y; ++y)
 	{
@@ -201,7 +161,9 @@ void NoiseGenerator::CalculateFractalNoises(const std::vector<DirectX::XMFLOAT3>
 		for (size_t x{}; x < m_Settings.mapSize.x; ++x)
 		{
 			const float fractalNoise{ GetFractalNoise((float)x, 1, (float)y, m_Settings.scale, offsets) };
-			vector.push_back(fractalNoise);
+			const float billowNoise{ GetBillowNoise(fractalNoise) };
+			const float ridgedNoise{ GetRidgedNoise(billowNoise) };
+			vector.push_back(ridgedNoise);
 		}
 		m_NoiseMap.push_back(vector);
 	}
@@ -212,7 +174,10 @@ void NoiseGenerator::RecalculateFractalNoises(const std::vector<DirectX::XMFLOAT
 	{
 		for (size_t x{}; x < m_Settings.mapSize.x; ++x)
 		{
-			m_NoiseMap[y][x] = GetFractalNoise((float)x, 1, (float)y, m_Settings.scale, offsets);
+			const float fractalNoise{ GetFractalNoise((float)x, 1, (float)y, m_Settings.scale, offsets) };
+			const float billowNoise{ GetBillowNoise(fractalNoise) };
+			const float ridgedNoise{ GetRidgedNoise(billowNoise) };
+			m_NoiseMap[y][x] = ridgedNoise;
 		}
 	}
 }
@@ -360,4 +325,14 @@ float NoiseGenerator::Gradient(const bool useOriginalPerlinFunction,
 float NoiseGenerator::Lerp(const float a, const float b, const float x)
 {
 	return a + x * (b - a);
+}
+
+float NoiseGenerator::GetBillowNoise(const float fractalNoise)
+{
+	return abs(fractalNoise);
+}
+
+float NoiseGenerator::GetRidgedNoise(const float billowNoise)
+{
+	return 1 - billowNoise;
 }

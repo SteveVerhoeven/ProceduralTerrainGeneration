@@ -59,12 +59,17 @@ x.clear();
 /* ****************** */
 /* DELETING RESOURCES */
 /* ****************** */
-#define DELETE_RESOURCE_VALID( x ) \
+/*#define DELETE_RESOURCE_VALID( x ) \
 if (x->IsValid())           \
 {                           \
     x->Release();           \
     x = nullptr;            \
-}                           
+} */  
+#define DELETE_RESOURCE_VALID( x ) \
+if (x->IsValid())				   \
+{								   \
+    DELETE_RESOURCE( x );		   \
+} 
 #define DELETE_RESOURCE( x ) \
 if (x)                      \
 {                           \

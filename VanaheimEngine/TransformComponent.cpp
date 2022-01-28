@@ -87,7 +87,7 @@ void TransformComponent::Rotate(const float x, const float y, const float z, con
 		XMStoreFloat4(&m_WorldRotation, rotationVector);
 
 		// Store the values -- TODO: Fix quaternion to euler to store them
-		Locator::GetDebugLoggerService()->Log(ErrorLevel::LOG_WARNING, "TransformComponent: Rotate - Fix quaternion to euler to store them");
+		LOG(ErrorLevel::LOG_WARNING, "TransformComponent: Rotate - Fix quaternion to euler to store them");
 		m_Pitch += x;
 		m_Yaw += y;
 		m_Roll += z;

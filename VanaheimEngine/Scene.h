@@ -1,6 +1,7 @@
 #pragma once
 
 class Mesh;
+class Line;
 class Material;
 class Material_ProcGen;
 class GameObject;
@@ -29,11 +30,13 @@ class Scene
 
 		void ActivateScene() { m_IsActive = true; }
 		void DeactivateScene() { m_IsActive = false; }
+		
+		void CreateLineObject(const std::string& name, const DirectX::XMFLOAT3& possition, Line* pLine);
 
 	protected:
 		void CreateCamera(const std::string& name, const DirectX::XMFLOAT3& position);
 		void Create3DObject(const std::string& name, const DirectX::XMFLOAT3& position, const std::string& meshPath, Material* pMaterial);
-		void Create3DObject(const std::string& name, const DirectX::XMFLOAT3& position, Mesh* pMesh, Material* pMaterial);
+		void Create3DObject(const std::string& name, const DirectX::XMFLOAT3& possition, Mesh* pMesh, Material* pMaterial);
 		void CreateUI();
 
 	private:

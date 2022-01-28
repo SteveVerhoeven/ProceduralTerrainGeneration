@@ -11,9 +11,6 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="Mesh">
-      <UniqueIdentifier>{38aafb86-c917-4278-830e-a08ff564f3c3}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Game">
       <UniqueIdentifier>{427aff19-c1b0-49cf-9436-2a82534925d5}</UniqueIdentifier>
     </Filter>
@@ -29,20 +26,8 @@
     <Filter Include="Generator">
       <UniqueIdentifier>{c2fb1ea4-77ff-44e1-95fa-f055ab0ed965}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Mesh\Material">
-      <UniqueIdentifier>{5e4e47c3-b086-4bca-9c2f-860e1547ff2a}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Mesh\Material\BASE">
-      <UniqueIdentifier>{4ded50f6-1f4c-4fca-8219-e65cffe6335a}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Mesh\Material\SPECIALIZED">
-      <UniqueIdentifier>{72bc392d-6cda-4923-a677-407161b92fe3}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Helper">
       <UniqueIdentifier>{929cdb0a-7b6a-4188-931c-7ad34a5087dd}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Mesh\Texture">
-      <UniqueIdentifier>{7b62509d-a30a-4d46-bcba-92c36acf2507}</UniqueIdentifier>
     </Filter>
     <Filter Include="Patterns">
       <UniqueIdentifier>{ae9821e5-999e-4b15-b96d-9559d4362eb2}</UniqueIdentifier>
@@ -79,6 +64,30 @@
     </Filter>
     <Filter Include="UI\OLD">
       <UniqueIdentifier>{f94814ca-15f7-4af6-9cfb-516c22773824}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Data">
+      <UniqueIdentifier>{e27c33ad-e434-4e42-b300-aaed723dc07c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Geometry">
+      <UniqueIdentifier>{38aafb86-c917-4278-830e-a08ff564f3c3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Geometry\Material">
+      <UniqueIdentifier>{5e4e47c3-b086-4bca-9c2f-860e1547ff2a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Geometry\Material\BASE">
+      <UniqueIdentifier>{4ded50f6-1f4c-4fca-8219-e65cffe6335a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Geometry\Material\SPECIALIZED">
+      <UniqueIdentifier>{72bc392d-6cda-4923-a677-407161b92fe3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Geometry\Texture">
+      <UniqueIdentifier>{7b62509d-a30a-4d46-bcba-92c36acf2507}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Geometry\Mesh">
+      <UniqueIdentifier>{08fb8b67-cd43-4121-ba45-6590279ca0d0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Geometry\Mesh\BASE">
+      <UniqueIdentifier>{050a4f8b-119e-49ca-a695-e6f32177a857}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -120,9 +129,6 @@
     <ClCompile Include="ModelComponent.cpp">
       <Filter>Patterns\Components</Filter>
     </ClCompile>
-    <ClCompile Include="Mesh.cpp">
-      <Filter>Mesh</Filter>
-    </ClCompile>
     <ClCompile Include="RenderComponent.cpp">
       <Filter>Patterns\Components</Filter>
     </ClCompile>
@@ -133,10 +139,10 @@
       <Filter>Patterns\Components</Filter>
     </ClCompile>
     <ClCompile Include="Material.cpp">
-      <Filter>Mesh\Material\BASE</Filter>
+      <Filter>Geometry\Material\BASE</Filter>
     </ClCompile>
     <ClCompile Include="Material_Basic.cpp">
-      <Filter>Mesh\Material\SPECIALIZED</Filter>
+      <Filter>Geometry\Material\SPECIALIZED</Filter>
     </ClCompile>
     <ClCompile Include="Command.cpp">
       <Filter>Patterns\Command</Filter>
@@ -193,10 +199,10 @@
       <Filter>IMAGE</Filter>
     </ClCompile>
     <ClCompile Include="Material_ProcGen.cpp">
-      <Filter>Mesh\Material\SPECIALIZED</Filter>
+      <Filter>Geometry\Material\SPECIALIZED</Filter>
     </ClCompile>
     <ClCompile Include="Texture.cpp">
-      <Filter>Mesh\Texture</Filter>
+      <Filter>Geometry\Texture</Filter>
     </ClCompile>
     <ClCompile Include="NoiseGenerator.cpp">
       <Filter>Generator</Filter>
@@ -221,6 +227,36 @@
     </ClCompile>
     <ClCompile Include="DemoUI.cpp">
       <Filter>UI\OLD</Filter>
+    </ClCompile>
+    <ClCompile Include="Octree.cpp">
+      <Filter>Data</Filter>
+    </ClCompile>
+    <ClCompile Include="LineComponent.cpp">
+      <Filter>Patterns\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="KDTree.cpp">
+      <Filter>Data</Filter>
+    </ClCompile>
+    <ClCompile Include="Material_GPUInstance.cpp">
+      <Filter>Geometry\Material\SPECIALIZED</Filter>
+    </ClCompile>
+    <ClCompile Include="Mesh.cpp">
+      <Filter>Geometry\Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="Line.cpp">
+      <Filter>Geometry\Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="Mesh_Base.cpp">
+      <Filter>Geometry\Mesh\BASE</Filter>
+    </ClCompile>
+    <ClCompile Include="Cube.cpp">
+      <Filter>Geometry\Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="Material_ProcGen_GPU.cpp">
+      <Filter>Geometry\Material\SPECIALIZED</Filter>
+    </ClCompile>
+    <ClCompile Include="Voxel.cpp">
+      <Filter>Geometry\Mesh</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -271,9 +307,6 @@
     <ClInclude Include="ModelComponent.h">
       <Filter>Patterns\Components</Filter>
     </ClInclude>
-    <ClInclude Include="Mesh.h">
-      <Filter>Mesh</Filter>
-    </ClInclude>
     <ClInclude Include="RenderComponent.h">
       <Filter>Patterns\Components</Filter>
     </ClInclude>
@@ -284,10 +317,10 @@
       <Filter>Patterns\Components</Filter>
     </ClInclude>
     <ClInclude Include="Material.h">
-      <Filter>Mesh\Material\BASE</Filter>
+      <Filter>Geometry\Material\BASE</Filter>
     </ClInclude>
     <ClInclude Include="Material_Basic.h">
-      <Filter>Mesh\Material\SPECIALIZED</Filter>
+      <Filter>Geometry\Material\SPECIALIZED</Filter>
     </ClInclude>
     <ClInclude Include="Command.h">
       <Filter>Patterns\Command</Filter>
@@ -353,10 +386,10 @@
       <Filter>Helper</Filter>
     </ClInclude>
     <ClInclude Include="Material_ProcGen.h">
-      <Filter>Mesh\Material\SPECIALIZED</Filter>
+      <Filter>Geometry\Material\SPECIALIZED</Filter>
     </ClInclude>
     <ClInclude Include="Texture.h">
-      <Filter>Mesh\Texture</Filter>
+      <Filter>Geometry\Texture</Filter>
     </ClInclude>
     <ClInclude Include="TerrainSettings.h">
       <Filter>Generator</Filter>
@@ -390,6 +423,36 @@
     </ClInclude>
     <ClInclude Include="DemoUI.h">
       <Filter>UI\OLD</Filter>
+    </ClInclude>
+    <ClInclude Include="Octree.h">
+      <Filter>Data</Filter>
+    </ClInclude>
+    <ClInclude Include="LineComponent.h">
+      <Filter>Patterns\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="KDTree.h">
+      <Filter>Data</Filter>
+    </ClInclude>
+    <ClInclude Include="Material_GPUInstance.h">
+      <Filter>Geometry\Material\SPECIALIZED</Filter>
+    </ClInclude>
+    <ClInclude Include="Mesh.h">
+      <Filter>Geometry\Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="Line.h">
+      <Filter>Geometry\Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="Mesh_Base.h">
+      <Filter>Geometry\Mesh\BASE</Filter>
+    </ClInclude>
+    <ClInclude Include="Cube.h">
+      <Filter>Geometry\Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="Material_ProcGen_GPU.h">
+      <Filter>Geometry\Material\SPECIALIZED</Filter>
+    </ClInclude>
+    <ClInclude Include="Voxel.h">
+      <Filter>Geometry\Mesh</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

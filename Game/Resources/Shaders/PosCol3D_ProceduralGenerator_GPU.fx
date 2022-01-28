@@ -224,8 +224,10 @@ void GS(point VS_OUTPUT vertices[1], inout TriangleStream<VS_OUTPUT> triStream)
 	float modifier = 0.5f;
 	float heightDiff = -40.f;
 
+	// Top layer
 	CreateVoxel(vertices[0], modifier, triStream, 0.f);
-	//CreateVoxel(vertices[0], modifier, triStream, heightDiff);
+	// Bottom layer
+	CreateVoxel(vertices[0], modifier, triStream, heightDiff);
 }
 
 // ------------------------
@@ -244,7 +246,7 @@ technique11 DefaultTechnique
 	pass P0
 	{
 		SetVertexShader(CompileShader(vs_5_0, VS()));
-		//SetGeometryShader(CompileShader(gs_5_0, GS()));
+		SetGeometryShader(CompileShader(gs_5_0, GS()));
 		SetPixelShader(CompileShader(ps_5_0, PS()));
 	}
 }

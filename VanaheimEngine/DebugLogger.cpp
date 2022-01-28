@@ -19,7 +19,7 @@ void DebugLogger::Log(const ErrorLevel& errorLevel, const std::string& message)
 	const std::string outputMessage{ OutputMessageToConsole(errorLevel, message) };
 	OutputMessageBox(errorLevel, outputMessage);
 
-	Locator::GetUIManagerService()->GetUI<ConsoleUI>()->Log(outputMessage);
+	Locator::GetUIManagerService()->GetUI<ConsoleUI>()->Log(message);
 }
 void DebugLogger::LogHRESULT(HRESULT hr, const std::string& functionName, const std::string& file, const std::string& line)
 {

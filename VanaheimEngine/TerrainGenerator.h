@@ -2,12 +2,14 @@
 #include "Generator.h"
 #include "TerrainSettings.h"
 
+class KDTree;
+class Octree;
 class NoiseGenerator;
 class TerrainGenerator final : public Generator
 {
 	public:
 		TerrainGenerator(NoiseGenerator* pGen);
-		virtual ~TerrainGenerator() = default;
+		~TerrainGenerator();
 
 		TerrainGenerator(const TerrainGenerator&) = delete;
 		TerrainGenerator(TerrainGenerator&&) noexcept = delete;
@@ -17,18 +19,19 @@ class TerrainGenerator final : public Generator
 		void Initialize();
 
 		// Terrain
-		Mesh* CreateTerrain();
+		/** 2D plane terrain */
+		Mesh* CreateNormalTerrain();
+		/** Voxel terrain, all on CPU */
+		Mesh* CreateVoxelTerrain_CPU();
+		/** Voxel terrain, center points on CPU, cubes on GPU */
+		Mesh* CreateVoxelTerrain_GPU();
+		/** Normal 2D plane terrain but Octree created over it - Visually rendered */
+		Mesh* CreateNormalTerrain_OcTree(Scene* pScene, const bool visualizeDataStructure);
+		/** Normal 2D plane terrain but KDtree created over it - Not visually rendered */
+		Mesh* CreateNormalTerrain_KDTree(Scene* pScene);
 
 		// Generating
 		void GenerateColorMap(const std::vector<std::vector<float>>& noiseMap);
-
-		// Settings
-		void EditSettings(const ProcGenSettings& settings);
-		ProcGenSettings& GetProcGenSettings() { return m_Settings; }
-
-		// UI
-		template<typename T>
-		T GetValueByName(const std::string& name) const;
 
 	protected:
 		virtual void onNotify(ObserverEvent event) override;
@@ -38,12 +41,14 @@ class TerrainGenerator final : public Generator
 		// Variables
 		// *************
 		ProcGenSettings m_Settings;
-
 		NoiseGenerator* m_pNoiseGenerator;
 		std::vector<Terrain> m_TerrainRegions;
 		std::vector<Vertex_Input> m_Vertices;
 		std::vector<uint32_t> m_Indices;
-		std::vector<Voxel> m_Voxels;
+
+		// Data structures
+		Octree* m_pOctree;
+		KDTree* m_pKDTree;
 
 		// *************
 		// Functions
@@ -51,31 +56,16 @@ class TerrainGenerator final : public Generator
 		// General
 		void CreateVertices();
 		void CreateIndices();
+		void CreateTerrainRegions();
 
-		// UI
-		void CreateUIData();
+		// DataStructures
+		void CreateOctree(const std::vector<std::vector<float>>& noiseMap, Scene* pScene, const bool visualizeDataStructure);
+		void CreateKDTree(const std::vector<std::vector<float>>& noiseMap, Scene* pScene);
 		
+		void FindArrayTimings();
+		void FindOctantTimings(const std::vector<std::vector<float>>& noiseMap);
+		void FindKDNodeTimings(const std::vector<std::vector<float>>& noiseMap);
+
 		// Voxels
-		void CreateVoxel(const DirectX::XMFLOAT3& position, const DirectX::XMFLOAT2& size, const float bottomModifier = 0.f);
 		void CreateVoxels();
-		void CreateVoxelIndices();
-
-		void CreateFrontFace(const DirectX::XMFLOAT3& position, const DirectX::XMFLOAT2& size, const float bottomModifier = 0.f);
-		void CreateLeftFace(const DirectX::XMFLOAT3& position, const DirectX::XMFLOAT2& size, const float bottomModifier = 0.f);
-		void CreateRightFace(const DirectX::XMFLOAT3& position, const DirectX::XMFLOAT2& size, const float bottomModifier = 0.f);
-		void CreateBottomFace(const DirectX::XMFLOAT3& position, const DirectX::XMFLOAT2& size, const float bottomModifier = 0.f);
-		void CreateTopFace(const DirectX::XMFLOAT3& position, const DirectX::XMFLOAT2& size);
-		void CreateBackFace(const DirectX::XMFLOAT3& position, const DirectX::XMFLOAT2& size, const float bottomModifier = 0.f);
-
 };
-
-template<typename T>
-inline T TerrainGenerator::GetValueByName(const std::string& name) const
-{
-	if (name == "xRes")
-		return (T)m_Settings.xRes;
-	else if (name == "zRes")
-		return (T)m_Settings.zRes;
-
-	return T();
-}

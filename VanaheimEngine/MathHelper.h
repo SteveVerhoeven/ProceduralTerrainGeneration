@@ -3,7 +3,7 @@
 
 #include <algorithm>
 
-int RandomInt(const int min, const int max)
+inline int RandomInt(const int min, const int max)
 {
 	return min + (rand() % (max - min + 1));
 }
@@ -62,4 +62,43 @@ std::vector<std::vector<T>> Normalize2DVector(std::vector<std::vector<T>> vector
 			//vector[x][y] = Remap(vector[x][y], 0.f, 1.f);
 
 	return vector;
+}
+
+inline float ConvertBytesToKiloBytes(const unsigned int bytes)
+{
+	return bytes / 1024.f;
+}
+inline float ConvertBytesToMegaBytes(const unsigned int bytes)
+{
+	return ConvertBytesToKiloBytes(bytes) / 1024.f;
+}
+inline float ConvertBytesToGigaBytes(const unsigned int bytes)
+{
+	return ConvertBytesToMegaBytes(bytes) / 1024.f;
+}
+
+inline float ConvertNanoSecondsToMilliSeconds(const long long nanoSeconds)
+{
+	return nanoSeconds * powf(10, -6);
+}
+inline float ConvertMicroSecondsToMilliSeconds(const long long nanoSeconds)
+{
+	return nanoSeconds * powf(10, -3);
+}
+
+inline bool EqualFloat3(const DirectX::XMFLOAT3& point1, const DirectX::XMFLOAT3& point2)
+{
+	if (abs(point1.x - point2.x) < FLT_EPSILON)
+		if (abs(point1.y - point2.y) < FLT_EPSILON)
+			if (abs(point1.z - point2.z) < FLT_EPSILON)
+				return true;
+
+	return false;
+}
+inline bool EqualFloat(const float value1, const float value2)
+{
+	if (abs(value1 - value2) < FLT_EPSILON)
+		return true;
+
+	return false;
 }

@@ -20,7 +20,7 @@ struct MeshData
 
 	int ID{};
 	std::string name{};
-	Mesh* pMesh{};
+	Mesh_Base* pMesh{};
 };
 struct MaterialData
 {

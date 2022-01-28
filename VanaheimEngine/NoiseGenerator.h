@@ -21,13 +21,7 @@ class NoiseGenerator final : public Generator
 		// Generating
 		const std::vector<std::vector<float>>& GenerateNoiseMap(const DirectX::XMFLOAT3 & personalOffset);
 
-		// Settings
-		void EditSettings(NoiseGenSettings & settings);
 		NoiseGenSettings* GetNoiseGenSettings() { return &m_Settings; }
-
-		// UI
-		template<typename T>
-		T GetValueByName(const std::string & name) const;
 
 	protected:
 		virtual void onNotify(ObserverEvent event) override;
@@ -50,10 +44,10 @@ class NoiseGenerator final : public Generator
 		// General
 		bool Validate(DirectX::XMFLOAT2 & mapSize, float& scale);
 		void CreateUIData();
+		void CalculateNoises(const std::vector<DirectX::XMFLOAT3>&offsets);
 
 		// Fractal Noise
 		void GenerateOffsets(std::vector<DirectX::XMFLOAT3>&offsets, const DirectX::XMFLOAT3 & personalOffset);
-		void CalculateFractalNoises(const std::vector<DirectX::XMFLOAT3>&offsets);
 		void RecalculateFractalNoises(const std::vector<DirectX::XMFLOAT3>&offsets);
 		float GetFractalNoise(const float xCoord, const float yCoord, const float zCoord, const float noiseScale, const std::vector<DirectX::XMFLOAT3>&offsets);
 
@@ -63,21 +57,12 @@ class NoiseGenerator final : public Generator
 		int Increment(const int num);
 		float Gradient(const bool useOriginalPerlinFunction, const int hash, const float x, const float y, const float z);
 		float Lerp(const float a, const float b, const float x);
+
+		// Billow noise
+		float GetBillowNoise(const float fractalNoise);
+
+		// Ridged noise
+		float GetRidgedNoise(const float billowNoise);
+
+
 };
-
-template<typename T>
-inline T NoiseGenerator::GetValueByName(const std::string& name) const
-{
-	if (name == "Seed")
-		return (T)m_Settings.seed;
-	else if (name == "Octaves")
-		return (T)m_Settings.octaves;
-	else if (name == "Lacunarity")
-		return (T)m_Settings.lacunarity;
-	else if (name == "Persistence")
-		return (T)m_Settings.persistence;
-	else if (name == "Scale")
-		return (T)m_Settings.scale;
-
-	return T();
-}

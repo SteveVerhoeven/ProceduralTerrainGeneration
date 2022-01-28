@@ -59,6 +59,13 @@ void GameObject::Render() const
 			pUIComponent->Render();
 			return;
 		}
+
+		LineComponent* pLineComponent = dynamic_cast<LineComponent*>(pComp);
+		if (pLineComponent)
+		{
+			pLineComponent->Render();
+			return;
+		}
 	}
 }
 

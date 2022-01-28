@@ -8,7 +8,7 @@
 #include "Timer.h"
 
 RotateCameraCommand::RotateCameraCommand()
-					: m_RotatingSpeed(50.f)
+					: m_RotatingSpeed(100.f)
 					, m_MousePos()
 					, m_pCameraObject(nullptr)
 {

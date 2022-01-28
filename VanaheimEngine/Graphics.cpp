@@ -217,7 +217,8 @@ HRESULT Graphics::CreateDepth_Stencil_Resources()
 
 void Graphics::ClearBackbuffer()
 {
-	m_pDeviceContext->ClearRenderTargetView(m_pRenderTargetView, reinterpret_cast<const float*>(&DirectX::Colors::CornflowerBlue));
+	//m_pDeviceContext->ClearRenderTargetView(m_pRenderTargetView, reinterpret_cast<const float*>(&DirectX::Colors::CornflowerBlue));
+	m_pDeviceContext->ClearRenderTargetView(m_pRenderTargetView, reinterpret_cast<const float*>(&DirectX::Colors::Black));
 	m_pDeviceContext->ClearDepthStencilView(m_pDepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 }
 void Graphics::PresentBackbuffer()

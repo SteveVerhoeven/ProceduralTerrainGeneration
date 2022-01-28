@@ -31,7 +31,7 @@ struct VS_OUTPUT
 {
 	float4 Position : SV_POSITION;			// SV = system variable
 	float3 Color : COLOR;
-	float2 Uv : TEXCOORD0;
+	float2 Uv : TEXCOORD;
 };
 
 // ------------------------
@@ -50,178 +50,6 @@ VS_OUTPUT VS(VS_INPUT input)
 	return output;
 }
 
-//**********************************//
-//         GEOMETRY SHADER          //
-//**********************************//
-void CreateVertex(inout TriangleStream<VS_OUTPUT> triStream, float3 pos, float3 color, float2 uv)
-{
-	VS_OUTPUT data = (VS_OUTPUT)0;
-	data.Position = mul(float4(pos, 1), gWorldViewProj);
-	data.Color = color;
-	data.Uv = uv;
-	triStream.Append(data);
-}
-
-void CreateFrontFace(VS_OUTPUT vert, float mod, float heightDiff, inout TriangleStream<VS_OUTPUT> triStream)
-{
-	float3 posLT = (float3)0;
-	float3 posRT = (float3)0;
-	float3 posLB = (float3)0;
-	float3 posRB = (float3)0;
-
-	if (heightDiff != 0.f)
-	{
-		float diffAbove0 = 0 - (vert.Position.y - mod);
-		heightDiff = diffAbove0 + abs(heightDiff);
-	}
-
-	posLT = float3(vert.Position.x - mod, vert.Position.y + mod			    , vert.Position.z - mod);
-	posRT = float3(vert.Position.x + mod, vert.Position.y + mod			    , vert.Position.z - mod);
-	posLB = float3(vert.Position.x - mod, vert.Position.y - mod - heightDiff, vert.Position.z - mod);
-	posRB = float3(vert.Position.x + mod, vert.Position.y - mod - heightDiff, vert.Position.z - mod);
-
-	CreateVertex(triStream, posLT, vert.Color, vert.Uv);	// LT
-	CreateVertex(triStream, posRT, vert.Color, vert.Uv);	// RT
-	CreateVertex(triStream, posLB, vert.Color, vert.Uv);	// LB
-	CreateVertex(triStream, posRB, vert.Color, vert.Uv);	// RB
-}
-void CreateLeftFace(VS_OUTPUT vert, float mod, float heightDiff, inout TriangleStream<VS_OUTPUT> triStream)
-{
-	float3 posLT = (float3)0;
-	float3 posRT = (float3)0;
-	float3 posLB = (float3)0;
-	float3 posRB = (float3)0;
-
-	if (heightDiff != 0.f)
-	{
-		float diffAbove0 = 0 - (vert.Position.y - mod);
-		heightDiff = diffAbove0 + abs(heightDiff);
-	}
-
-	posLT = float3(vert.Position.x - mod, vert.Position.y + mod, vert.Position.z + mod);
-	posRT = float3(vert.Position.x - mod, vert.Position.y + mod, vert.Position.z - mod);
-	posLB = float3(vert.Position.x - mod, vert.Position.y - mod - heightDiff, vert.Position.z + mod);
-	posRB = float3(vert.Position.x - mod, vert.Position.y - mod - heightDiff, vert.Position.z - mod);
-
-	CreateVertex(triStream, posLT, vert.Color, vert.Uv);	// LT
-	CreateVertex(triStream, posRT, vert.Color, vert.Uv);	// RT
-	CreateVertex(triStream, posLB, vert.Color, vert.Uv);	// LB
-	CreateVertex(triStream, posRB, vert.Color, vert.Uv);	// RB
-}
-void CreateRightFace(VS_OUTPUT vert, float mod, float heightDiff, inout TriangleStream<VS_OUTPUT> triStream)
-{
-	float3 posLT = (float3)0;
-	float3 posRT = (float3)0;
-	float3 posLB = (float3)0;
-	float3 posRB = (float3)0;
-
-	if (heightDiff != 0.f)
-	{
-		float diffAbove0 = 0 - (vert.Position.y - mod);
-		heightDiff = diffAbove0 + abs(heightDiff);
-	}
-
-	posLT = float3(vert.Position.x + mod, vert.Position.y + mod, vert.Position.z - mod);
-	posRT = float3(vert.Position.x + mod, vert.Position.y + mod, vert.Position.z + mod);
-	posLB = float3(vert.Position.x + mod, vert.Position.y - mod - heightDiff, vert.Position.z - mod);
-	posRB = float3(vert.Position.x + mod, vert.Position.y - mod - heightDiff, vert.Position.z + mod);
-
-	CreateVertex(triStream, posLT, vert.Color, vert.Uv);	// LT
-	CreateVertex(triStream, posRT, vert.Color, vert.Uv);	// RT
-	CreateVertex(triStream, posLB, vert.Color, vert.Uv);	// LB
-	CreateVertex(triStream, posRB, vert.Color, vert.Uv);	// RB
-
-}
-void CreateBottomFace(VS_OUTPUT vert, float mod, float heightDiff, inout TriangleStream<VS_OUTPUT> triStream)
-{
-	float3 posLT = (float3)0;
-	float3 posRT = (float3)0;
-	float3 posLB = (float3)0;
-	float3 posRB = (float3)0;
-
-	if (heightDiff != 0.f)
-	{
-		float diffAbove0 = 0 - (vert.Position.y - mod);
-		heightDiff = diffAbove0 + abs(heightDiff);
-	}
-
-	posLT = float3(vert.Position.x - mod, vert.Position.y - mod - heightDiff, vert.Position.z - mod);
-	posRT = float3(vert.Position.x + mod, vert.Position.y - mod - heightDiff, vert.Position.z - mod);
-	posLB = float3(vert.Position.x - mod, vert.Position.y - mod - heightDiff, vert.Position.z + mod);
-	posRB = float3(vert.Position.x + mod, vert.Position.y - mod - heightDiff, vert.Position.z + mod);
-
-	CreateVertex(triStream, posLT, vert.Color, vert.Uv);	// LT
-	CreateVertex(triStream, posRT, vert.Color, vert.Uv);	// RT
-	CreateVertex(triStream, posLB, vert.Color, vert.Uv);	// LB
-	CreateVertex(triStream, posRB, vert.Color, vert.Uv);	// RB
-}
-void CreateTopFace(VS_OUTPUT vert, float mod, float heightDiff, inout TriangleStream<VS_OUTPUT> triStream)
-{
-	float3 posLT = (float3)0;
-	float3 posRT = (float3)0;
-	float3 posLB = (float3)0;
-	float3 posRB = (float3)0;
-
-	if (heightDiff != 0.f)
-	{
-		float diffAbove0 = 0 - (vert.Position.y - mod);
-		heightDiff = diffAbove0 + abs(heightDiff);
-	}
-
-	posLT = float3(vert.Position.x - mod, vert.Position.y + mod, vert.Position.z + mod);
-	posRT = float3(vert.Position.x + mod, vert.Position.y + mod, vert.Position.z + mod);
-	posLB = float3(vert.Position.x - mod, vert.Position.y + mod, vert.Position.z - mod);
-	posRB = float3(vert.Position.x + mod, vert.Position.y + mod, vert.Position.z - mod);
-
-	CreateVertex(triStream, posLT, vert.Color, vert.Uv);	// LT
-	CreateVertex(triStream, posRT, vert.Color, vert.Uv);	// RT
-	CreateVertex(triStream, posLB, vert.Color, vert.Uv);	// LB
-	CreateVertex(triStream, posRB, vert.Color, vert.Uv);	// RB
-}
-void CreateBackFace(VS_OUTPUT vert, float mod, float heightDiff, inout TriangleStream<VS_OUTPUT> triStream)
-{
-	float3 posLT = (float3)0;
-	float3 posRT = (float3)0;
-	float3 posLB = (float3)0;
-	float3 posRB = (float3)0;
-
-	if (heightDiff != 0.f)
-	{
-		float diffAbove0 = 0 - (vert.Position.y - mod);
-		heightDiff = diffAbove0 + abs(heightDiff);
-	}
-
-	posLT = float3(vert.Position.x + mod, vert.Position.y + mod, vert.Position.z + mod);
-	posRT = float3(vert.Position.x - mod, vert.Position.y + mod, vert.Position.z + mod);
-	posLB = float3(vert.Position.x + mod, vert.Position.y - mod - heightDiff, vert.Position.z + mod);
-	posRB = float3(vert.Position.x - mod, vert.Position.y - mod - heightDiff, vert.Position.z + mod);
-
-	CreateVertex(triStream, posLT, vert.Color, vert.Uv);	// LT
-	CreateVertex(triStream, posRT, vert.Color, vert.Uv);	// RT
-	CreateVertex(triStream, posLB, vert.Color, vert.Uv);	// LB
-	CreateVertex(triStream, posRB, vert.Color, vert.Uv);	// RB
-}
-
-void CreateVoxel(VS_OUTPUT vert, float mod, inout TriangleStream<VS_OUTPUT> triStream, float heightDiff)
-{
-	CreateFrontFace(vert, mod, heightDiff, triStream);
-	CreateLeftFace(vert, mod, heightDiff, triStream);
-	CreateRightFace(vert, mod, heightDiff, triStream);
-	CreateBottomFace(vert, mod, heightDiff, triStream);
-	CreateTopFace(vert, mod, heightDiff, triStream);
-	CreateBackFace(vert, mod, heightDiff, triStream);
-}
-
-[maxvertexcount(96)]
-void GS(point VS_OUTPUT vertices[1], inout TriangleStream<VS_OUTPUT> triStream)
-{
-	float modifier = 0.5f;
-	float heightDiff = -21.f;
-
-	CreateVoxel(vertices[0], modifier, triStream, 0.f);
-	//CreateVoxel(vertices[0], modifier, triStream, heightDiff);
-}
-
 // ------------------------
 // Pixel shader
 // ------------------------
@@ -237,8 +65,7 @@ technique11 DefaultTechnique
 {
 	pass P0
 	{
-		SetVertexShader(CompileShader(vs_5_0, VS()));
-		SetGeometryShader(CompileShader(gs_5_0, GS()));
+		SetVertexShader(CompileShader(vs_5_0, VS()));		
 		SetPixelShader(CompileShader(ps_5_0, PS()));
 	}
 }

@@ -46,6 +46,7 @@
 #include "CameraComponent.h"
 #include "RenderComponent.h"
 #include "TransformComponent.h"
+#include "LineComponent.h"
 #pragma endregion
 
 #pragma region Macro
@@ -67,18 +68,31 @@ x.clear();
 /* ****************** */
 /* DELETING RESOURCES */
 /* ****************** */
-#define DELETE_RESOURCE_VALID( x ) \
-if (x->IsValid())                  \
+/*#define DELETE_RESOURCE_VALID( x ) \
+if (x->IsValid() && x)             \
 {                                  \
     x->Release();                  \
-    x = nullptr;                      \
-}                           
+    x = nullptr;                   \
+}  */ 
+#define DELETE_RESOURCE_VALID( x ) \
+if (x->IsValid())				   \
+{								   \
+    DELETE_RESOURCE( x );		   \
+} 
 #define DELETE_RESOURCE( x ) \
 if (x)                       \
 {                            \
     x->Release();            \
     x = nullptr;                \
 }
+/* ******* */
+/* LOGGING */
+/* ******* */
+/** Function to log a message to the visual studio console (IF created) and to the engine console */
+// @param: errorLevel - The level of message that is sent to the consoles (ErrorLevel::...)
+// @param: message    - The message to sent to the consoles
+#define LOG( errorLevel, message )	\
+Locator::GetDebugLoggerService()->Log(errorLevel, message);
 #pragma endregion
 
 #pragma region General structs
@@ -88,6 +102,8 @@ struct Vertex_Input
 	DirectX::XMFLOAT3 Color{};
 	DirectX::XMFLOAT2 UV{};
 	DirectX::XMFLOAT3 InstancePos{};
+	DirectX::XMFLOAT4 InstanceLengthV1{};
+	DirectX::XMFLOAT4 InstanceLengthV2{};
 
 	bool operator==(const Vertex_Input& v)
 	{

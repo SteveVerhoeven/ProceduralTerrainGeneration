@@ -1,79 +1,39 @@
 #include "pch.h"
 #include "TerrainGenerator.h"
 
+#include "ResourceManager.h"
 #include "GeneratorManager.h"
 #include "NoiseGenerator.h"
 
 #include "Mesh.h"
+#include "Timer.h"
 
-#include "ResourceManager.h"
+#include "Octree.h"
+#include "KDTree.h"
+#include "Voxel.h"
 
-#include "UIManager.h"
-#include "GeneratorUI.h"
+// Timings
+#define Total
+#define Average
 
 TerrainGenerator::TerrainGenerator(NoiseGenerator* pGen)
 				 : Generator("TerrainGenerator")
 				 , m_Settings()
 				 , m_pNoiseGenerator(pGen)
 				 , m_TerrainRegions()
+				 , m_pKDTree()
+				 , m_pOctree()
 {
 	Initialize();
 }
+TerrainGenerator::~TerrainGenerator()
+{
+	DELETE_POINTER(m_pOctree);
+	DELETE_POINTER(m_pKDTree);
+}
 void TerrainGenerator::Initialize()
 {
-	m_TerrainRegions.push_back({ TerrainType::WATER_DEEP   , 0.2f, DirectX::Colors::DarkBlue });
-	m_TerrainRegions.push_back({ TerrainType::WATER_SHALLOW, 0.4f, DirectX::Colors::Blue });
-	m_TerrainRegions.push_back({ TerrainType::SAND		   , 0.45f, DirectX::Colors::LightGoldenrodYellow });
-	m_TerrainRegions.push_back({ TerrainType::GRASS		   , 0.50f, DirectX::Colors::LightGreen });
-	m_TerrainRegions.push_back({ TerrainType::GRASS_DENSE  , 0.6f, DirectX::Colors::DarkGreen });
-	m_TerrainRegions.push_back({ TerrainType::ROCK		   , 0.85f, DirectX::Colors::Brown });
-	m_TerrainRegions.push_back({ TerrainType::SNOW		   , 1.f , DirectX::Colors::White });
-
-	CreateUIData();
-}
-
-Mesh* TerrainGenerator::CreateTerrain()
-{
-	const std::vector<std::vector<float>> noiseMap = m_pNoiseGenerator->GenerateNoiseMap({0,0,0});
-	GenerateColorMap(noiseMap);
-
-	CreateVertices();
-	CreateIndices();
-	
-	//CreateVoxels();
-
-	Mesh* pMesh{ new Mesh() };
-	pMesh->Initialize(m_Vertices, m_Indices);
-
-	Locator::GetResourceManagerService()->Store3DMesh(pMesh, "Landscape_1");
-
-	return pMesh;
-}
-void TerrainGenerator::GenerateColorMap(const std::vector<std::vector<float>>& noiseMap)
-{
-	const DirectX::XMFLOAT2 mapSize{ m_Settings.noiseGenSettings.mapSize };
-	std::vector<std::vector<DirectX::XMFLOAT3>> colorMap{};
-	for (size_t y{}; y < mapSize.y; ++y)
-	{
-		std::vector<DirectX::XMFLOAT3> row{};
-		for (size_t x{}; x < mapSize.x; ++x)
-		{
-			const float currentHeight{ noiseMap[y][x] };
-
-			const size_t nbrOfRegions{ m_TerrainRegions.size() };
-			for (size_t r{}; r < nbrOfRegions; ++r)
-			{
-				if (currentHeight <= m_TerrainRegions[r].height)
-				{
-					row.push_back(m_TerrainRegions[r].color);
-					break;
-				}
-			}
-		}
-		colorMap.push_back(row);
-	}
-
-	GenerateImage(colorMap, "./Resources/Textures/Landscape/colorMap.bmp", DirectX::XMFLOAT2{ (float)m_Settings.xRes, (float)m_Settings.zRes });
+	CreateTerrainRegions();
 }
 
 void TerrainGenerator::onNotify(ObserverEvent event)
@@ -82,30 +42,97 @@ void TerrainGenerator::onNotify(ObserverEvent event)
 		GenerateColorMap(m_pNoiseGenerator->GetNoiseMap());
 }
 
-void TerrainGenerator::EditSettings(const ProcGenSettings& settings)
+Mesh* TerrainGenerator::CreateNormalTerrain()
 {
-	m_Settings.xRes = settings.xRes;
-	m_Settings.zRes = settings.zRes;
+	const std::vector<std::vector<float>>& noiseMap = m_pNoiseGenerator->GenerateNoiseMap({ 0,0,0 });
+	GenerateColorMap(noiseMap);
 
-	m_Settings.noiseGenSettings = settings.noiseGenSettings;
+	CreateVertices();
+	CreateIndices();
 
-	m_pNoiseGenerator->EditSettings(m_Settings.noiseGenSettings);
+	Mesh* pMesh{ new Mesh() };
+	pMesh->Initialize(m_Vertices, m_Indices);
+	Locator::GetResourceManagerService()->Store3DMesh(pMesh, "Landscape_1");
+
+	return pMesh;
+}
+Mesh* TerrainGenerator::CreateVoxelTerrain_CPU()
+{
+	const std::vector<std::vector<float>>& noiseMap = m_pNoiseGenerator->GenerateNoiseMap({0,0,0});
+	GenerateColorMap(noiseMap);
+
+	CreateVoxels();
+
+	Mesh* pMesh{ new Mesh() };
+	pMesh->Initialize(m_Vertices, m_Indices);
+	Locator::GetResourceManagerService()->Store3DMesh(pMesh, "Landscape_1");
+
+	return pMesh;
+}
+Mesh* TerrainGenerator::CreateVoxelTerrain_GPU()
+{
+	const std::vector<std::vector<float>>& noiseMap = m_pNoiseGenerator->GenerateNoiseMap({ 0,0,0 });
+	GenerateColorMap(noiseMap);
+
+	CreateVertices();
+	CreateIndices();
+
+	Mesh* pMesh{ new Mesh() };
+	pMesh->Initialize(m_Vertices, m_Indices);
+	Locator::GetResourceManagerService()->Store3DMesh(pMesh, "Landscape_1");
+
+	return pMesh;
+}
+Mesh* TerrainGenerator::CreateNormalTerrain_OcTree(Scene* pScene, const bool visualizeDataStructure)
+{
+	const std::vector<std::vector<float>>& noiseMap = m_pNoiseGenerator->GenerateNoiseMap({ 0,0,0 });
+	GenerateColorMap(noiseMap);
+
+	CreateVertices();
+	CreateIndices();
+
+	CreateOctree(noiseMap, pScene, visualizeDataStructure);
+
+	Mesh* pMesh{ new Mesh() };
+	pMesh->Initialize(m_Vertices, m_Indices);
+	Locator::GetResourceManagerService()->Store3DMesh(pMesh, "Landscape_1");
+
+	return pMesh;
+}
+Mesh* TerrainGenerator::CreateNormalTerrain_KDTree(Scene* pScene)
+{
+	const std::vector<std::vector<float>>& noiseMap = m_pNoiseGenerator->GenerateNoiseMap({ 0,0,0 });
+	GenerateColorMap(noiseMap);
+
+	CreateVertices();
+	CreateIndices();
+
+	CreateKDTree(noiseMap, pScene);
+
+	Mesh* pMesh{ new Mesh() };
+	pMesh->Initialize(m_Vertices, m_Indices);
+	Locator::GetResourceManagerService()->Store3DMesh(pMesh, "Landscape_1");
+
+	return pMesh;
 }
 
 void TerrainGenerator::CreateVertices()
 {
 	const int width{ m_Settings.xRes };
-	const int height{ m_Settings.zRes };
-	for (int z{}; z < height; ++z)
+	const int depth{ m_Settings.zRes };
+
+	for (int z{}; z < depth; ++z)
 	{
 		for (int x{}; x < width; ++x)
 		{
 			Vertex_Input vertex{};
 			vertex.Position = DirectX::XMFLOAT3((float)x, 0.f, -(float)z);
-			vertex.UV = DirectX::XMFLOAT2((float(x) / float(width)), (float(z) / float(height)));
+			vertex.UV = DirectX::XMFLOAT2((float(x) / float(width)), (float(z) / float(depth)));
 			m_Vertices.push_back(vertex);
 		}
 	}
+
+	//FindArrayTimings();
 }
 void TerrainGenerator::CreateIndices()
 {
@@ -138,207 +165,254 @@ void TerrainGenerator::CreateIndices()
 		}
 	}
 }
-void TerrainGenerator::CreateVoxel(const DirectX::XMFLOAT3& position, const DirectX::XMFLOAT2& size, const float bottomModifier)
+void TerrainGenerator::CreateTerrainRegions()
 {
-	// Side Front
-	CreateFrontFace(position, size, bottomModifier);
-	// Side Left
-	CreateLeftFace(position, size, bottomModifier);
-	// Side Right
-	CreateRightFace(position, size, bottomModifier);
-	// Side Bottom
-	CreateBottomFace(position, size, bottomModifier);
-	// Side Top
-	CreateTopFace(position, size);
-	// Side Back
-	CreateBackFace(position, size, bottomModifier);
+	m_TerrainRegions.push_back({ TerrainType::WATER_DEEP   , 0.2f, DirectX::Colors::DarkBlue });
+	m_TerrainRegions.push_back({ TerrainType::WATER_SHALLOW, 0.4f, DirectX::Colors::Blue });
+	m_TerrainRegions.push_back({ TerrainType::SAND		   , 0.45f, DirectX::Colors::LightGoldenrodYellow });
+	m_TerrainRegions.push_back({ TerrainType::GRASS		   , 0.50f, DirectX::Colors::LightGreen });
+	m_TerrainRegions.push_back({ TerrainType::GRASS_DENSE  , 0.6f, DirectX::Colors::DarkGreen });
+	m_TerrainRegions.push_back({ TerrainType::ROCK		   , 0.85f, DirectX::Colors::Brown });
+	m_TerrainRegions.push_back({ TerrainType::SNOW		   , 1.f , DirectX::Colors::White });
+}
+
+void TerrainGenerator::CreateOctree(const std::vector<std::vector<float>>& noiseMap, Scene* pScene, const bool visualizeDataStructure)
+{
+	m_pOctree = new Octree(0, 50, (float)-m_Settings.zRes, (float)m_Settings.xRes, 0, 0);
+	const size_t size{ noiseMap.size() };
+	for (size_t z{ 0 }; z < size; ++z)
+		for (size_t x{ 0 }; x < size; ++x)
+		{
+			const float noiseHeight = powf(noiseMap[z][x], 3.9f) * 25.f;
+			m_pOctree->Insert({ float(x), noiseHeight, -float(z) });
+		}
+	
+	if (visualizeDataStructure)
+		m_pOctree->Visualize(pScene);
+
+	//FindOctantTimings(noiseMap);
+}
+void TerrainGenerator::CreateKDTree(const std::vector<std::vector<float>>& noiseMap, Scene* /*pScene*/)
+{
+	const size_t width{ (size_t)m_Settings.xRes };
+	const size_t widthHalf{ width / 2 };
+	const size_t depth{ (size_t)m_Settings.zRes };
+	const size_t depthHalf{ depth / 2 };
+
+	// Start at middle
+	m_pKDTree = new KDTree();
+	KDTreeNode* pRootNode{};
+	{
+		const float noiseHeight = powf(noiseMap[depthHalf][widthHalf], 3.9f) * 25.f;
+		const float pointValues[] = { float(widthHalf), noiseHeight, -float(depthHalf) };
+		m_pKDTree->SetRootNode(m_pKDTree->Insert(pointValues, 0));
+		pRootNode = m_pKDTree->GetRootNode();
+	}
+
+	/** Fill the tree without the middle */
+	for (size_t z{}; z < depth; ++z)
+	{
+		for (size_t x{}; x < width; ++x)
+		{
+			if (z == depthHalf && x == widthHalf)
+				continue;
+
+			const float noiseHeight = powf(noiseMap[z][x], 3.9f) * 25.f;
+			const float pointValues[] = { float(x), noiseHeight, -float(z) };
+			m_pKDTree->SetRootNode(m_pKDTree->Insert(pointValues, 0));
+		}
+	}
+	m_pKDTree->SetRootNode(pRootNode);
+
+	//FindKDNodeTimings(noiseMap);
 }
 void TerrainGenerator::CreateVoxels()
 {
 	const float width{ float(m_Settings.xRes) };
 	const float depth{ float(m_Settings.yRes) };
 	const float height{ float(m_Settings.zRes) };
-	
+
 	/** Create Surface Voxels */
 	for (float z{}; z < height; ++z)
 	{
 		for (float x{}; x < width; ++x)
 		{
-			/** Create Top Voxel */
-			CreateVoxel({ x, 0, -z }, { width, height });
-
-			///** Fill the space under the current voxel */			
-			CreateVoxel({ x, -1.f, -z }, { width, height }, -depth);
+			// Top layer
+			Voxel voxel1{ m_Vertices, m_Indices, { x, 0.f, -z }, { width, height } };
+			// Lower layer
+			Voxel voxel2{ m_Vertices, m_Indices, { x, -1.f, -z }, { width, height }, -depth };
 		}
 	}
 }
 
-void TerrainGenerator::CreateVoxelIndices()
+void TerrainGenerator::FindArrayTimings()
 {
-	// i		 i + 1
-	// +---------+
-	// |         |
-	// |		 |
-	// |		 |
-	// +---------+
-	// i + w	 i + w + 1
+	LOG(ErrorLevel::LOG_INFO, "----------------------------------------------!");
+	LOG(ErrorLevel::LOG_INFO, "Array timings!");
 
-	m_Indices.push_back(m_Vertices.size() - 4);
-	m_Indices.push_back(m_Vertices.size() - 1);
-	m_Indices.push_back(m_Vertices.size() - 3);
+	Timer* pTimer{ Locator::GetTimerService() };
+	long long timeMS{};
+	#ifdef Average
+	int pointsFound{};
+	#endif
 
-	m_Indices.push_back(m_Vertices.size() - 1);
-	m_Indices.push_back(m_Vertices.size() - 4);
-	m_Indices.push_back(m_Vertices.size() - 2);
+	const size_t randomNumbers{ size_t((m_Settings.xRes * m_Settings.zRes) / 2) };
+	#ifdef Total
+	pTimer->StartCodeTimer();
+	#endif
+	for (size_t i{}; i < randomNumbers; ++i)
+	{
+		const float randomXPos{ float(RandomInt(0, (m_Settings.xRes - 1))) };
+		const float randomYPos{ 0.f };
+		const float randomZPos{ -float(RandomInt(0, (m_Settings.zRes - 1))) };
+
+		#ifdef Average
+		pTimer->StartCodeTimer();
+		#endif
+		const size_t size{ m_Vertices.size() };
+		for (size_t j{}; j < size; ++j)
+		{
+			const Vertex_Input& vIn{ m_Vertices[j] };
+			if (vIn.Position.x == randomXPos)
+				if (vIn.Position.y == randomYPos)
+					if (vIn.Position.z == randomZPos)
+					{
+						#ifdef average
+						timeMS += pTimer->EndCodeTimer(TimeSizeType::NANOSECONDS);
+						++pointsFound;
+						#endif
+						break;
+						
+					}
+		}
+		
+	}
+	#ifdef Total
+	timeMS = pTimer->EndCodeTimer(TimeSizeType::NANOSECONDS);
+	LOG(ErrorLevel::LOG_INFO, "total time to find all " + std::to_string(randomNumbers) + " points: " + std::to_string(ConvertNanoSecondsToMilliSeconds(timeMS)) + "ms.");
+	#endif
+	#ifdef Average
+	LOG(ErrorLevel::LOG_INFO, "Average time to find all " + std::to_string(randomNumbers) + " points: " + std::to_string(ConvertNanoSecondsToMilliSeconds(timeMS) / randomNumbers) + "ms.");
+	LOG(ErrorLevel::LOG_INFO, "# points found of " + std::to_string(randomNumbers) + ": " + std::to_string(pointsFound) + ".");
+	#endif
 }
-
-void TerrainGenerator::CreateFrontFace(const DirectX::XMFLOAT3& position, const DirectX::XMFLOAT2& size, const float bottomModifier)
+void TerrainGenerator::FindOctantTimings(const std::vector<std::vector<float>>& noiseMap)
 {
-	const float modifier{ 0.5f };
-
-	Vertex_Input vLT{};		Vertex_Input vRT{};
-	Vertex_Input vLB{};		Vertex_Input vRB{};
-
-	vLT.Position = DirectX::XMFLOAT3(position.x - modifier, position.y + modifier, position.z - modifier);
-	vLB.Position = DirectX::XMFLOAT3(position.x - modifier, position.y - ((bottomModifier == 0.f) ? modifier : bottomModifier), position.z - modifier);
-	vRT.Position = DirectX::XMFLOAT3(position.x + modifier, position.y + modifier, position.z - modifier);
-	vRB.Position = DirectX::XMFLOAT3(position.x + modifier, position.y - ((bottomModifier == 0.f) ? modifier : bottomModifier), position.z - modifier);
+	LOG(ErrorLevel::LOG_INFO, "----------------------------------------------!");
+	LOG(ErrorLevel::LOG_INFO, "Octant timings!");
 	
-	vLT.UV = vLB.UV = vRT.UV = vRB.UV = DirectX::XMFLOAT2((position.x / float(size.x)), (-position.z / float(size.y)));
+	Timer* pTimer{ Locator::GetTimerService() };
+	long long timeMS{};
+	#ifdef Average
+	int pointsFound{};
+	#endif
+
+	const size_t randomNumbers{ size_t((m_Settings.xRes * m_Settings.zRes) / 2) };
+	#ifdef Total
+	pTimer->StartCodeTimer();
+	#endif
+	for (size_t i{}; i < randomNumbers; ++i)
+	{
+		const int randomXPos{ RandomInt(0, (m_Settings.xRes - 1)) };
+		const int randomZPos{ RandomInt(0, -(m_Settings.zRes - 1)) };
+
+		const float height{ noiseMap[randomZPos][randomXPos] };
+		const float randomYPos = powf(height, 3.9f) * 25.f;
+
+		#ifdef Average
+		pTimer->StartCodeTimer();
+		
+		if (m_pOctree->Find({ float(randomXPos), randomYPos, -float(randomZPos) }))
+			++pointsFound;
+
+		timeMS += pTimer->EndCodeTimer(TimeSizeType::NANOSECONDS);
+		#endif
+
+		#ifndef Average
+		m_pOctree->Find({ float(randomXPos), randomYPos, -float(randomZPos) });
+		#endif // !average
+	}
+	#ifdef Total
+	timeMS = pTimer->EndCodeTimer(TimeSizeType::NANOSECONDS);
+	LOG(ErrorLevel::LOG_INFO, "total time to find all " + std::to_string(randomNumbers) + " points: " + std::to_string(ConvertNanoSecondsToMilliSeconds(timeMS)) + "ms.");
+	#endif
+	#ifdef Average
+	LOG(ErrorLevel::LOG_INFO, "Average time to find all " + std::to_string(randomNumbers) + " points: " + std::to_string(ConvertNanoSecondsToMilliSeconds(timeMS) / randomNumbers) + "ms.");
+	LOG(ErrorLevel::LOG_INFO, "# points found of " + std::to_string(randomNumbers) + ": " + std::to_string(pointsFound) + ".");
+	#endif
+}
+void TerrainGenerator::FindKDNodeTimings(const std::vector<std::vector<float>>& noiseMap)
+{
+	LOG(ErrorLevel::LOG_INFO, "----------------------------------------------!");
+	LOG(ErrorLevel::LOG_INFO, "KDtree timings!");
+
+	Timer* pTimer{ Locator::GetTimerService() };
+	long long timeMS{};
+	#ifdef Average
+	int pointsFound{};
+	#endif
+
+	const size_t randomNumbers{ size_t((m_Settings.xRes * m_Settings.zRes) / 2) };
 	
-	m_Vertices.push_back(vLT);
-	m_Vertices.push_back(vLB);
-	m_Vertices.push_back(vRT);
-	m_Vertices.push_back(vRB);
+	#ifdef Total
+	pTimer->StartCodeTimer();
+	#endif
+	for (size_t i{}; i < randomNumbers; ++i)
+	{
+		const int randomXPos{ RandomInt(0, m_Settings.xRes - 1) };
+		const int randomZPos{ RandomInt(0, m_Settings.zRes - 1) };
 
-	CreateVoxelIndices();
-}
-void TerrainGenerator::CreateLeftFace(const DirectX::XMFLOAT3& position, const DirectX::XMFLOAT2& size, const float bottomModifier)
-{
-	const float modifier{ 0.5f };
+		const float height{ noiseMap[randomZPos][randomXPos] };
+		const float randomYPos = powf(height, 3.9f) * 25.f;
 
-	Vertex_Input vLT{};		Vertex_Input vRT{};
-	Vertex_Input vLB{};		Vertex_Input vRB{};
+		float arr[DIMENSIONS]{ float(randomXPos), randomYPos, -float(randomZPos) };
+		m_pKDTree->FindNode(arr);
 
-	vLT.Position = DirectX::XMFLOAT3(position.x - modifier, position.y + modifier, position.z + modifier);
-	vLB.Position = DirectX::XMFLOAT3(position.x - modifier, position.y - ((bottomModifier == 0.f) ? modifier : bottomModifier), position.z + modifier);
-	vRT.Position = DirectX::XMFLOAT3(position.x - modifier, position.y + modifier, position.z - modifier);
-	vRB.Position = DirectX::XMFLOAT3(position.x - modifier, position.y - ((bottomModifier == 0.f) ? modifier : bottomModifier), position.z - modifier);
+		#ifdef Average
+		pTimer->StartCodeTimer();
 
-	vLT.UV = vLB.UV = vRT.UV = vRB.UV = DirectX::XMFLOAT2((position.x / float(size.x)), (-position.z / float(size.y)));
+		if (m_pKDTree->FindNode(arr))
+			++pointsFound;
 
-	m_Vertices.push_back(vLT);
-	m_Vertices.push_back(vLB);
-	m_Vertices.push_back(vRT);
-	m_Vertices.push_back(vRB);
-
-	CreateVoxelIndices();
-}
-void TerrainGenerator::CreateRightFace(const DirectX::XMFLOAT3& position, const DirectX::XMFLOAT2& size, const float bottomModifier)
-{
-	const float modifier{ 0.5f };
-
-	Vertex_Input vLT{};		Vertex_Input vRT{};
-	Vertex_Input vLB{};		Vertex_Input vRB{};
-
-	vLT.Position = DirectX::XMFLOAT3(position.x + modifier, position.y + modifier, position.z - modifier);
-	vLB.Position = DirectX::XMFLOAT3(position.x + modifier, position.y - ((bottomModifier == 0.f) ? modifier : bottomModifier), position.z - modifier);
-	vRT.Position = DirectX::XMFLOAT3(position.x + modifier, position.y + modifier, position.z + modifier);
-	vRB.Position = DirectX::XMFLOAT3(position.x + modifier, position.y - ((bottomModifier == 0.f) ? modifier : bottomModifier), position.z + modifier);
-
-	vLT.UV = vLB.UV = vRT.UV = vRB.UV = DirectX::XMFLOAT2((position.x / float(size.x)), (-position.z / float(size.y)));
-
-	m_Vertices.push_back(vLT);
-	m_Vertices.push_back(vLB);
-	m_Vertices.push_back(vRT);
-	m_Vertices.push_back(vRB);
-
-	CreateVoxelIndices();
-}
-void TerrainGenerator::CreateBottomFace(const DirectX::XMFLOAT3& position, const DirectX::XMFLOAT2& size, const float bottomModifier)
-{
-	const float modifier{ 0.5f };
-
-	Vertex_Input vLT{};		Vertex_Input vRT{};
-	Vertex_Input vLB{};		Vertex_Input vRB{};
-
-	vLT.Position = DirectX::XMFLOAT3(position.x - modifier, position.y - ((bottomModifier == 0.f) ? modifier : bottomModifier), position.z - modifier);
-	vLB.Position = DirectX::XMFLOAT3(position.x - modifier, position.y - ((bottomModifier == 0.f) ? modifier : bottomModifier), position.z + modifier);
-	vRT.Position = DirectX::XMFLOAT3(position.x + modifier, position.y - ((bottomModifier == 0.f) ? modifier : bottomModifier), position.z - modifier);
-	vRB.Position = DirectX::XMFLOAT3(position.x + modifier, position.y - ((bottomModifier == 0.f) ? modifier : bottomModifier), position.z + modifier);
-
-	vLT.UV = vLB.UV = vRT.UV = vRB.UV = DirectX::XMFLOAT2((position.x / float(size.x)), (-position.z / float(size.y)));
-
-	m_Vertices.push_back(vLT);
-	m_Vertices.push_back(vLB);
-	m_Vertices.push_back(vRT);
-	m_Vertices.push_back(vRB);
-
-	CreateVoxelIndices();
-}
-void TerrainGenerator::CreateTopFace(const DirectX::XMFLOAT3& position, const DirectX::XMFLOAT2& size)
-{
-	const float modifier{ 0.5f };
-
-	Vertex_Input vLT{};		Vertex_Input vRT{};
-	Vertex_Input vLB{};		Vertex_Input vRB{};
-
-	vLT.Position = DirectX::XMFLOAT3(position.x - modifier, position.y + modifier, position.z + modifier);
-	vLB.Position = DirectX::XMFLOAT3(position.x - modifier, position.y + modifier, position.z - modifier);
-	vRT.Position = DirectX::XMFLOAT3(position.x + modifier, position.y + modifier, position.z + modifier);
-	vRB.Position = DirectX::XMFLOAT3(position.x + modifier, position.y + modifier, position.z - modifier);
-
-	vLT.UV = vLB.UV = vRT.UV = vRB.UV = DirectX::XMFLOAT2((position.x / float(size.x)), (-position.z / float(size.y)));
-
-	m_Vertices.push_back(vLT);
-	m_Vertices.push_back(vLB);
-	m_Vertices.push_back(vRT);
-	m_Vertices.push_back(vRB);
-
-	CreateVoxelIndices();
-}
-void TerrainGenerator::CreateBackFace(const DirectX::XMFLOAT3& position, const DirectX::XMFLOAT2& size, const float bottomModifier)
-{
-	const float modifier{ 0.5f };
-
-	Vertex_Input vLT{};		Vertex_Input vRT{};
-	Vertex_Input vLB{};		Vertex_Input vRB{};
-
-	vLT.Position = DirectX::XMFLOAT3(position.x + modifier, position.y + modifier, position.z + modifier);
-	vLB.Position = DirectX::XMFLOAT3(position.x + modifier, position.y - ((bottomModifier == 0.f) ? modifier : bottomModifier), position.z + modifier);
-	vRT.Position = DirectX::XMFLOAT3(position.x - modifier, position.y + modifier, position.z + modifier);
-	vRB.Position = DirectX::XMFLOAT3(position.x - modifier, position.y - ((bottomModifier == 0.f) ? modifier : bottomModifier), position.z + modifier);
-
-	vLT.UV = vLB.UV = vRT.UV = vRB.UV = DirectX::XMFLOAT2((position.x / float(size.x)), (-position.z / float(size.y)));
-
-	m_Vertices.push_back(vLT);
-	m_Vertices.push_back(vLB);
-	m_Vertices.push_back(vRT);
-	m_Vertices.push_back(vRB);
-
-	CreateVoxelIndices();
+		timeMS += pTimer->EndCodeTimer(TimeSizeType::NANOSECONDS);
+		#endif
+		#ifndef Average
+		m_pKDTree->FindNode(arr);
+		#endif // !average
+	}
+	#ifdef Total
+	timeMS = pTimer->EndCodeTimer(TimeSizeType::NANOSECONDS);
+	LOG(ErrorLevel::LOG_INFO, "total time to find all " + std::to_string(randomNumbers) + " points: " + std::to_string(ConvertNanoSecondsToMilliSeconds(timeMS)) + "ms.");
+	#endif
+	#ifdef Average
+	LOG(ErrorLevel::LOG_INFO, "Average time to find all " + std::to_string(randomNumbers) + " points: " + std::to_string(ConvertNanoSecondsToMilliSeconds(timeMS) / randomNumbers) + "ms.");
+	LOG(ErrorLevel::LOG_INFO, "# points found of " + std::to_string(randomNumbers) + ": " + std::to_string(pointsFound) + ".");
+	#endif
 }
 
-
-
-
-void TerrainGenerator::CreateUIData()
+void TerrainGenerator::GenerateColorMap(const std::vector<std::vector<float>>& noiseMap)
 {
-	//// Inspector
-	//std::vector<ObserverEvent> events_xRes{};
-	//events_xRes.push_back(ObserverEvent::DECREASE_XRES);
-	//events_xRes.push_back(ObserverEvent::INCREASE_XRES);
-	//events_xRes.push_back(ObserverEvent::INCREASE_XRES);
+	const DirectX::XMFLOAT2 mapSize{ m_Settings.noiseGenSettings.mapSize };
+	std::vector<std::vector<DirectX::XMFLOAT3>> colorMap{};
+	for (size_t y{}; y < mapSize.y; ++y)
+	{
+		std::vector<DirectX::XMFLOAT3> row{};
+		for (size_t x{}; x < mapSize.x; ++x)
+		{
+			const float currentHeight{ noiseMap[y][x] };
 
-	//std::vector<ObserverEvent> events_zRes{};
-	//events_zRes.push_back(ObserverEvent::DECREASE_ZRES);
-	//events_zRes.push_back(ObserverEvent::INCREASE_ZRES);
+			const size_t nbrOfRegions{ m_TerrainRegions.size() };
+			for (size_t r{}; r < nbrOfRegions; ++r)
+			{
+				if (currentHeight <= m_TerrainRegions[r].height)
+				{
+					row.push_back(m_TerrainRegions[r].color);
+					break;
+				}
+			}
+		}
+		colorMap.push_back(row);
+	}
 
-	//const GeneratorVariable iv_xRes(GeneratorType::PROCEDURAL_GENERATION, UIButtonType::SLIDER_INT, "xRes", events_xRes, { 20, 1000 });
-	//const GeneratorVariable iv_zRes(GeneratorType::PROCEDURAL_GENERATION, UIButtonType::SLIDER_INT, "zRes", events_zRes, { 20, 1000 });
-
-	//UIManager* pUIManager{ Locator::GetUIManagerService() };
-	//GeneratorUI* pGenUI{ pUIManager->GetUI<GeneratorUI>() };
-	//pGenUI->StoreVariable(iv_xRes);
-	//pGenUI->StoreVariable(iv_zRes);
+	GenerateImage(colorMap, "./Resources/Textures/Landscape/colorMap.bmp", DirectX::XMFLOAT2{ (float)m_Settings.xRes, (float)m_Settings.zRes });
 }

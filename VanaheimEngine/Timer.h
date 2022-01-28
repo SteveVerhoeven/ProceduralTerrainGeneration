@@ -1,6 +1,16 @@
 #pragma once
 #include <chrono>
 
+enum class TimeSizeType
+{
+	NANOSECONDS,
+	MICROSECONDS,
+	MILLISECONDS,
+	SECONDS,
+	MINUTES,
+	HOURS
+};
+
 class Timer final
 {
 	public:
@@ -18,10 +28,23 @@ class Timer final
 		{
 			m_CodeTimer_Start = std::chrono::high_resolution_clock::now();
 		}
-		long long EndCodeTimer()
+		long long EndCodeTimer(const TimeSizeType& timeSizeType)
 		{
 			std::chrono::steady_clock::time_point codeTimer_End = std::chrono::high_resolution_clock::now();
-			long long duration = std::chrono::duration_cast<std::chrono::milliseconds>(codeTimer_End - m_CodeTimer_Start).count();
+			//long long duration = std::chrono::duration_cast<std::chrono::milliseconds>(codeTimer_End - m_CodeTimer_Start).count();
+			long long duration{};
+			if (timeSizeType == TimeSizeType::NANOSECONDS)
+				duration = std::chrono::duration_cast<std::chrono::nanoseconds>(codeTimer_End - m_CodeTimer_Start).count();
+			else if (timeSizeType == TimeSizeType::MICROSECONDS)
+				duration = std::chrono::duration_cast<std::chrono::microseconds>(codeTimer_End - m_CodeTimer_Start).count();
+			else if (timeSizeType == TimeSizeType::MILLISECONDS)
+				duration = std::chrono::duration_cast<std::chrono::milliseconds>(codeTimer_End - m_CodeTimer_Start).count();
+			else if (timeSizeType == TimeSizeType::SECONDS)
+				duration = std::chrono::duration_cast<std::chrono::nanoseconds>(codeTimer_End - m_CodeTimer_Start).count();
+			else if (timeSizeType == TimeSizeType::MINUTES)
+				duration = std::chrono::duration_cast<std::chrono::minutes>(codeTimer_End - m_CodeTimer_Start).count();
+			else 
+				duration = std::chrono::duration_cast<std::chrono::hours>(codeTimer_End - m_CodeTimer_Start).count();
 
 			m_CodeTimer_Start = {};
 

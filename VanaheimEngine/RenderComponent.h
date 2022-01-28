@@ -1,7 +1,8 @@
 #pragma once
 #include "Component.h"
 
-class Mesh;
+class Mesh_Base;
+class Line;
 class Material;
 class RenderComponent final : public Component
 {
@@ -15,6 +16,7 @@ class RenderComponent final : public Component
 		RenderComponent& operator=(RenderComponent&&) noexcept = delete;
 
 		void Render3DMesh(ID3D11DeviceContext* pDeviceContext, Mesh* p3DMesh, Material* pEffect);
+		void RenderLine(ID3D11DeviceContext* pDeviceContext, Line* pLine, Material* pEffect);
 
 		void EnableRenderComponent() { m_CanRenderComponent = true; }
 		bool GetCanRenderComponent() const { return m_CanRenderComponent; }
@@ -32,9 +34,21 @@ class RenderComponent final : public Component
 		void SetFilterMethod(Material* pEffect);
 		void SetRasterizerState(ID3D11DeviceContext* pDeviceContext);
 		void SetBlendingState(ID3D11DeviceContext* pDeviceContext);
-		void SetVertexBuffers(ID3D11DeviceContext* pDeviceContext, Mesh* p3DMesh);
-		void SetIndexBuffers(ID3D11DeviceContext* pDeviceContext, Mesh* p3DMesh);
-		void SetInputLayout(ID3D11DeviceContext* pDeviceContext, Mesh* p3DMesh);
-		void SetPrimTopology(ID3D11DeviceContext* pDeviceContext);
-		void Render(ID3D11DeviceContext* pDeviceContext, Material* pEffect, Mesh* p3DMesh);
+		void SetVertexBuffers(ID3D11DeviceContext* pDeviceContext, Mesh* pMeshBase);
+		void SetVertexBuffers(ID3D11DeviceContext* pDeviceContext, Line* pMeshBase);
+		void SetIndexBuffers(ID3D11DeviceContext* pDeviceContext, Mesh_Base* pMeshBase);
+		void SetConstantBuffers(ID3D11DeviceContext* pDeviceContext, Mesh* pMeshBase);
+		void SetConstantBuffers(ID3D11DeviceContext* pDeviceContext, Line* pMeshBase);
+		void SetInputLayout(ID3D11DeviceContext* pDeviceContext, Mesh_Base* pMeshBase);
+		void SetPrimTopology(ID3D11DeviceContext* pDeviceContext, const D3D11_PRIMITIVE_TOPOLOGY& topology);
+		void Render(ID3D11DeviceContext* pDeviceContext, Material* pEffect, Mesh* pMeshBase);
+		void Render(ID3D11DeviceContext* pDeviceContext, Material* pEffect, Line* pMeshBase);
+
+		// Instancing functions
+		void SetVertexBuffersNormal(ID3D11DeviceContext* pDeviceContext, Mesh_Base* pMeshBase);
+		void SetVertexBuffersInstanced(ID3D11DeviceContext* pDeviceContext, Mesh* pMeshBase);
+		void SetVertexBuffersInstanced(ID3D11DeviceContext* pDeviceContext, Line* pMeshBase);
+
+		void RenderNormal(ID3D11DeviceContext* pDeviceContext, Material* pEffect, Mesh_Base* pMeshBase);
+		void RenderInstanced(ID3D11DeviceContext* pDeviceContext, Material* pEffect, Mesh_Base* pMeshBase);
 };

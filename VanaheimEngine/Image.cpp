@@ -17,7 +17,7 @@ void Image::ExportImage(const std::string & path)
 	fileStream.open(path.c_str(), std::ios::out | std::ios::binary);
 	if (!fileStream.is_open())
 	{
-		Locator::GetDebugLoggerService()->Log(ErrorLevel::LOG_FATAL, "File could not be openend");
+		LOG(ErrorLevel::LOG_FATAL, "File could not be openend");
 		return;
 	}
 

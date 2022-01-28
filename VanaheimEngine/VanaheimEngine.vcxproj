@@ -95,6 +95,7 @@
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <AdditionalIncludeDirectories>$(SolutionDir)Libs\IMGUI;$(SolutionDir)Libs\DX_Tex\include;$(SolutionDir)Libs\DX_Effects11\include</AdditionalIncludeDirectories>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
+      <BrowseInformation>true</BrowseInformation>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -115,6 +116,9 @@
       <Command>
       </Command>
     </PostBuildEvent>
+    <Bscmake>
+      <PreserveSbr>true</PreserveSbr>
+    </Bscmake>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\Libs\IMGUI\backends\imgui_impl_dx11.cpp">
@@ -149,6 +153,7 @@
     <ClCompile Include="Command.cpp" />
     <ClCompile Include="Component.cpp" />
     <ClCompile Include="ConsoleUI.cpp" />
+    <ClCompile Include="Cube.cpp" />
     <ClCompile Include="DebugLogger.cpp" />
     <ClCompile Include="DemoUI.cpp" />
     <ClCompile Include="Game.cpp" />
@@ -159,22 +164,29 @@
     <ClCompile Include="Graphics.cpp" />
     <ClCompile Include="Image.cpp" />
     <ClCompile Include="InputManager.cpp" />
+    <ClCompile Include="KDTree.cpp" />
     <ClCompile Include="Locator.cpp" />
     <ClCompile Include="Material.cpp" />
     <ClCompile Include="Material_Basic.cpp" />
+    <ClCompile Include="Material_GPUInstance.cpp" />
     <ClCompile Include="Material_ProcGen.cpp" />
+    <ClCompile Include="Material_ProcGen_GPU.cpp" />
     <ClCompile Include="Mesh.cpp" />
+    <ClCompile Include="Mesh_Base.cpp" />
     <ClCompile Include="ModelComponent.cpp" />
     <ClCompile Include="MoveCameraCommand.cpp" />
     <ClCompile Include="NoiseGenerator.cpp" />
     <ClCompile Include="OBJParser.cpp" />
     <ClCompile Include="Observer.cpp" />
+    <ClCompile Include="Octree.cpp" />
     <ClCompile Include="pch.cpp" />
     <ClCompile Include="RenderComponent.cpp" />
     <ClCompile Include="ResourceManager.cpp" />
     <ClCompile Include="RotateCameraCommand.cpp" />
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="SceneManager.cpp" />
+    <ClCompile Include="Line.cpp" />
+    <ClCompile Include="LineComponent.cpp" />
     <ClCompile Include="Subject.cpp" />
     <ClCompile Include="TerrainGenerator.cpp" />
     <ClCompile Include="Texture.cpp" />
@@ -185,6 +197,7 @@
     <ClCompile Include="UIManager.cpp" />
     <ClCompile Include="VanaheimEngine.cpp" />
     <ClCompile Include="InspectorUI.cpp" />
+    <ClCompile Include="Voxel.cpp" />
     <ClCompile Include="Window.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -200,6 +213,7 @@
     <ClInclude Include="Command.h" />
     <ClInclude Include="Component.h" />
     <ClInclude Include="ConsoleUI.h" />
+    <ClInclude Include="Cube.h" />
     <ClInclude Include="DebugLogger.h" />
     <ClInclude Include="DemoUI.h" />
     <ClInclude Include="Game.h" />
@@ -212,17 +226,22 @@
     <ClInclude Include="Image.h" />
     <ClInclude Include="InputData.h" />
     <ClInclude Include="InputManager.h" />
+    <ClInclude Include="KDTree.h" />
     <ClInclude Include="Locator.h" />
     <ClInclude Include="Material.h" />
     <ClInclude Include="Material_Basic.h" />
+    <ClInclude Include="Material_GPUInstance.h" />
+    <ClInclude Include="Material_ProcGen_GPU.h" />
     <ClInclude Include="Material_ProcGen.h" />
     <ClInclude Include="MathHelper.h" />
     <ClInclude Include="Mesh.h" />
+    <ClInclude Include="Mesh_Base.h" />
     <ClInclude Include="ModelComponent.h" />
     <ClInclude Include="MoveCameraCommand.h" />
     <ClInclude Include="NoiseGenerator.h" />
     <ClInclude Include="OBJParser.h" />
     <ClInclude Include="Observer.h" />
+    <ClInclude Include="Octree.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="RenderComponent.h" />
     <ClInclude Include="resource.h" />
@@ -232,6 +251,8 @@
     <ClInclude Include="Scene.h" />
     <ClInclude Include="SceneManager.h" />
     <ClInclude Include="GeneratorData.h" />
+    <ClInclude Include="Line.h" />
+    <ClInclude Include="LineComponent.h" />
     <ClInclude Include="Subject.h" />
     <ClInclude Include="TerrainGenerator.h" />
     <ClInclude Include="TerrainSettings.h" />
@@ -244,6 +265,7 @@
     <ClInclude Include="UIManager.h" />
     <ClInclude Include="VanaheimEngine.h" />
     <ClInclude Include="InspectorUI.h" />
+    <ClInclude Include="Voxel.h" />
     <ClInclude Include="Window.h" />
   </ItemGroup>
   <ItemGroup>

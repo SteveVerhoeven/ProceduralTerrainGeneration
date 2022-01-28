@@ -2,7 +2,11 @@
 #include "Scene.h"
 
 #include "Material.h"
+//#include "Material_Basic.h"
+#include "Material_GPUInstance.h"
 #include "GameObject.h"
+
+#include "Line.h"
 
 #include "ResourceManager.h"
 
@@ -36,6 +40,8 @@ void Scene::Update(const float elapsedSec)
 
 	for (GameObject* pObject : m_pGameObjects)
 		pObject->Update(elapsedSec);
+
+	Locator::GetResourceManagerService()->ResetInstancedMeshes();
 }
 void Scene::FixedUpdate(const float timeEachUpdate)
 {
@@ -59,6 +65,22 @@ void Scene::Render() const
 void Scene::AddGameObject(GameObject* pObject)
 {
 	pObject->SetParentScene(this);
+
+	// Find duplicates
+	auto comp = pObject->GetComponent<LineComponent>();
+	if (comp)
+	{
+		auto mesh = comp->GetMesh();
+		if (mesh)
+		{
+			if (!Locator::GetResourceManagerService()->Load3DMesh(dynamic_cast<Mesh_Base*>(mesh), pObject))
+			{
+				DELETE_POINTER(pObject);
+				return;
+			}
+		}		
+	}	
+
 	m_pGameObjects.push_back(pObject);
 }
 GameObject* Scene::GetObjectByName(const std::string& name) const
@@ -126,6 +148,25 @@ void Scene::Create3DObject(const std::string& name, const DirectX::XMFLOAT3& pos
 
 	// Edit game object in scene
 	pMeshGO->GetComponent<TransformComponent>()->Translate(position, false);
+}
+void Scene::CreateLineObject(const std::string& name, const DirectX::XMFLOAT3& position, Line* pLine)
+{
+	// Game Object
+	GameObject* pLineGO{ new GameObject() };
+
+	// Model
+	LineComponent* pLineComponent{ new LineComponent(pLine) };
+	pLineComponent->AddMaterial(new Material_GPUInstance());
+
+	// Adding to game object
+	pLineGO->AddComponent(pLineComponent);
+	pLineGO->SetName(name);
+	
+	// Edit game object in scene
+	pLineGO->GetComponent<TransformComponent>()->Translate(position, false);
+
+	// Add to scene
+	AddGameObject(pLineGO);
 }
 void Scene::CreateUI()
 {

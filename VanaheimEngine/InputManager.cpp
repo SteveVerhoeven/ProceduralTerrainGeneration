@@ -56,46 +56,30 @@ bool InputManager::ProcessWindowsEvents(MSG& msg)
 		if (msg.message == WM_QUIT)
 			return false;
 
-		if (msg.wParam == 'G')
+		if (msg.wParam == 'G' && msg.message == WM_KEYUP)
 		{
 			m_MouseInputAccepted = !m_MouseInputAccepted;
+
+			LOG(ErrorLevel::LOG_INFO, "Rotating (0 = disabled // 1 = enabled): " + std::to_string(m_MouseInputAccepted) + '\n');
 		}
 
 		// Mouse rotation
-		if (m_MouseInputAccepted)
+		/* TODO: Snapping problem: When moving the mouse, it starts from the old position instead of the new one */
+		if (m_MouseInputAccepted && msg.wParam == VK_RBUTTON && msg.message == WM_MOUSEMOVE)
 		{
-			if (msg.wParam == VK_LBUTTON)
-			{
-				if (msg.message == WM_MOUSEMOVE)
-				{
-					Locator::GetUIManagerService()->GetUI<ConsoleUI>()->Log("Moving\n");
+			LOG(ErrorLevel::LOG_INFO, "Moving\n");
 
-					POINT mousePos{ GetMousePosition() };
-					POINT mouseMov{ GetMouseMovement() };
+			POINT mousePos{ GetMousePosition() };
+			POINT mouseMov{ GetMouseMovement() };
 
-					DirectX::XMFLOAT2 mouse{};
-					mouse.x = float(mouseMov.x);
-					mouse.y = float(mouseMov.y);
+			DirectX::XMFLOAT2 mouse{};
+			mouse.x = float(mouseMov.x);
+			mouse.y = float(mouseMov.y);
 
-					Command* pCommand{ GetCommand(ControllerButton::ButtonLThumbStick) };
-					RotateCameraCommand* pRotateCommand{ dynamic_cast<RotateCameraCommand*>(pCommand) };
-					pRotateCommand->SetMousePos(mouse);
-					pCommand->Execute();
-				}
-				Locator::GetUIManagerService()->GetUI<ConsoleUI>()->Log("Moving\n");
-
-				POINT mousePos{ GetMousePosition() };
-				POINT mouseMov{ GetMouseMovement() };
-
-				DirectX::XMFLOAT2 mouse{};
-				mouse.x = float(mouseMov.x);
-				mouse.y = float(mouseMov.y);
-
-				Command* pCommand{ GetCommand(ControllerButton::ButtonLThumbStick) };
-				RotateCameraCommand* pRotateCommand{ dynamic_cast<RotateCameraCommand*>(pCommand) };
-				pRotateCommand->SetMousePos(mouse);
-				pCommand->Execute();
-			}
+			Command* pCommand{ GetCommand(ControllerButton::ButtonLThumbStick) };
+			RotateCameraCommand* pRotateCommand{ dynamic_cast<RotateCameraCommand*>(pCommand) };
+			pRotateCommand->SetMousePos(mouse);
+			pCommand->Execute();
 		}
 	}
 

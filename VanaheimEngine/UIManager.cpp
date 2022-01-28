@@ -51,10 +51,10 @@ void UIManager::InitializeImGui(Window* pWindow, Graphics* pGraphics)
 	//io.ConfigFlags |= ImGuiConfigFlags_NoMouseCursorChange;
 
 	if (!ImGui_ImplWin32_Init(pWindow->GetWindowHandle()))
-		Locator::GetDebugLoggerService()->Log(ErrorLevel::LOG_ERROR, "UIManager::UIManager >> ImGui_ImplWin32_Init << failed");
+		LOG(ErrorLevel::LOG_ERROR, "UIManager::UIManager >> ImGui_ImplWin32_Init << failed");
 
 	if (!ImGui_ImplDX11_Init(pGraphics->GetDevice(), pGraphics->GetDeviceContext()))
-		Locator::GetDebugLoggerService()->Log(ErrorLevel::LOG_ERROR, "UIManager::UIManager >> ImGui_ImplDX11_Init << failed");
+		LOG(ErrorLevel::LOG_ERROR, "UIManager::UIManager >> ImGui_ImplDX11_Init << failed");
 
 	ImGui::StyleColorsDark();
 }

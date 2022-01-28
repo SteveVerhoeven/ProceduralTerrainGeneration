@@ -7,7 +7,7 @@
 
 ConsoleUI::ConsoleUI()
 		  : UI("Console", DirectX::XMFLOAT2{ 0.f, 0.f }, DirectX::XMFLOAT2{ 0.f, 0.f })
-		  , m_ConsoleMessages(std::vector<std::string>())
+		  , m_ConsoleMessages(/*std::vector<std::string>()*/)
 {
 	SetPositionAndSize();
 
@@ -33,7 +33,8 @@ void ConsoleUI::ShowWindow()
 	ImGui::Indent();
 	ImGui::PushButtonRepeat(true);
 	{
-		const size_t nbrOfConsoleMessages{ m_ConsoleMessages.size() };
+		//const size_t nbrOfConsoleMessages{ m_ConsoleMessages.size() };
+		const size_t nbrOfConsoleMessages{ m_MaxConsoleSize };
 		for (size_t i = 0; i < nbrOfConsoleMessages; ++i)
 		{
 			ImGui::Text(m_ConsoleMessages[i].c_str());

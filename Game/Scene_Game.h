@@ -26,5 +26,9 @@ class Scene_Game final : public Scene
 
 		void CreateInputs();
 		void CreateMainCamera();
-		void CreateLandscape();
+		void CreateLandscape_2DPlane();
+		void CreateLandscape_VoxelsCPU();
+		void CreateLandscape_VoxelsGPU();
+		void CreateLandscape_2DPlaneOctree(const bool visualizeDataStructure);
+		void CreateLandscape_2DPlaneKDtree();
 };
