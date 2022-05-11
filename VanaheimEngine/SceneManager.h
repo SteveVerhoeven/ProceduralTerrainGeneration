@@ -2,6 +2,8 @@
 #include <vector>
 
 class Scene;
+class Graphics;
+class UIManager;
 class SceneManager final
 {
 	public:
@@ -12,6 +14,7 @@ class SceneManager final
 		void PostInitialize();
 		void Update(const float elapsedSec);
 		void FixedUpdate(const float timeEachUpdate);
+		void LateUpdate();
 		void Render();
 
 		void AddGameScene(Scene* pScene) { m_pGameScenes.push_back(pScene); }
@@ -44,4 +47,6 @@ class SceneManager final
 		int m_ActiveMenuSceneIndex;
 		std::vector<Scene*> m_pGameScenes;
 		std::vector<Scene*> m_pMenuScenes;
+		Graphics* m_pGraphics;
+		UIManager* m_pUIManager;
 };

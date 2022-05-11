@@ -1,11 +1,9 @@
-#include "pch.h"
+#include "VanaheimPCH.h"
 #include "LineComponent.h"
 
 #include "Line.h"
-#include "GameObject.h"
 #include "Material.h"
 #include "Graphics.h"
-#include "ResourceManager.h"
 
 LineComponent::LineComponent(Line* pLine)
 				: Component()

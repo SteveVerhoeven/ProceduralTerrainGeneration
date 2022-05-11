@@ -1,4 +1,9 @@
 #pragma once
+#include <vector>
+#include <string>
+
+class Material;
+struct Vertex_Input;
 class Mesh_Base
 {
 	public:
@@ -29,6 +34,10 @@ class Mesh_Base
 
 		void IncrementInstanceCount() { ++m_AmountInstances; }
 		void DecrementInstanceCount() { --m_AmountInstances; }
+
+		/** Serializing */
+		const bool GetIsInitialized() const { return m_IsInitialized; }
+		const std::string& GetFilePath() const { return m_FilePath; }
 
 	protected:
 		bool m_IsInitialized;

@@ -1,6 +1,14 @@
 #pragma once
+#include <vector>
+#include <string>
+
 #include "ResourceData.h"
 
+class Mesh;
+class Texture;
+class Material;
+class Mesh_Base;
+class GameObject;
 class ResourceManager final
 {
 	public:
@@ -13,8 +21,6 @@ class ResourceManager final
 		ResourceManager& operator=(ResourceManager&&) noexcept = delete;
 
 		void Initialize();
-
-		//Mesh* Get3DMesh(const std::string& name);
 		
 		Mesh* Load3DMesh(const std::string& name, const std::string& path);
 		Mesh_Base* Load3DMesh(Mesh_Base* pMesh, GameObject* pParentGO);
@@ -25,6 +31,8 @@ class ResourceManager final
 		void Store3DMesh(Mesh* pMesh, const std::string& name);
 
 		void ResetInstancedMeshes();
+
+		std::vector<TextureData*> GetTextures() { return m_pTextures; }
 
 	private:
 		std::vector<MeshData*> m_p3DMeshes;

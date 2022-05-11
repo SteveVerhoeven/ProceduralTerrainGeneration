@@ -1,4 +1,4 @@
-#include "pch.h"
+#include "VanaheimPCH.h"
 #include "GameObject.h"
 
 #include "VanaheimEngine.h"
@@ -6,20 +6,19 @@
 
 GameObject::GameObject(const DirectX::XMFLOAT3& position, 
 					   const DirectX::XMFLOAT4& rotation, 
-					   const DirectX::XMFLOAT3& scale)
-		   : m_Name("")
+					   const DirectX::XMFLOAT3& scale,
+					   const std::string& name)
+		   : m_ToBeRemoved(false)
 		   , m_pParentScene(nullptr)
 		   , m_pComponents(std::vector<Component*>())
 {
 	Check_AddComponent_TransformComponent(position, rotation, scale);
 	Check_AddComponent_RenderComponent();
+	Check_AddComponent_NameComponent(name);
 }
 GameObject::~GameObject()
 {
-	for (Component* pComponent : m_pComponents)
-		DELETE_POINTER(pComponent);
-
-	m_pComponents.clear();
+	DELETE_POINTERS(m_pComponents, m_pComponents.size());
 }
 
 void GameObject::Initialize()
@@ -40,7 +39,7 @@ void GameObject::Update(const float elapsedSec)
 void GameObject::FixedUpdate(const float timeEachUpdate)
 {
 	for (Component* pComp : m_pComponents)
-		pComp->Update(timeEachUpdate);
+		pComp->FixedUpdate(timeEachUpdate);
 }
 void GameObject::Render() const
 {
@@ -50,13 +49,6 @@ void GameObject::Render() const
 		if (pModelComponent)
 		{
 			pModelComponent->Render();
-			return;
-		}
-
-		UIComponent* pUIComponent = dynamic_cast<UIComponent*>(pComp);
-		if (pUIComponent)
-		{
-			pUIComponent->Render();
 			return;
 		}
 
@@ -110,4 +102,16 @@ RenderComponent* GameObject::Check_AddComponent_RenderComponent()
 	}
 
 	return GetComponent<RenderComponent>();
+}
+NameComponent* GameObject::Check_AddComponent_NameComponent(const std::string& name)
+{
+	if (!HasComponent<NameComponent>())
+	{
+		NameComponent* pNameComponent{ new NameComponent(name) };
+		AddComponent(pNameComponent);
+
+		return pNameComponent;
+	}
+
+	return GetComponent<NameComponent>();
 }

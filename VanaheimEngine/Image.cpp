@@ -1,9 +1,7 @@
-#include "pch.h"
+#include "VanaheimPCH.h"
 #include "Image.h"
 
-#include <fstream>
-
-Image::Image(const DirectX::XMFLOAT2& dimensions)
+Image::Image(const DirectX::XMINT2& dimensions)
 	  : m_Dimensions(dimensions)
 	  , m_Colors(std::vector<DirectX::XMFLOAT3>(size_t(dimensions.x * dimensions.y)))
 {}
@@ -105,13 +103,13 @@ void Image::ExportImage(const std::string & path)
 	fileStream.write(reinterpret_cast<char*>(fileHeader), fileHeaderSize);
 	fileStream.write(reinterpret_cast<char*>(informationHeader), informationHeaderSize);
 
-	for (size_t y{}; y < m_Dimensions.y; ++y)
+	for (int y{}; y < m_Dimensions.y; ++y)
 	{
-		for (size_t x{}; x < m_Dimensions.x; ++x)
+		for (int x{}; x < m_Dimensions.x; ++x)
 		{
-			unsigned char r{ static_cast<unsigned char>(GetColor(x, y).x * 255.f) };
-			unsigned char g{ static_cast<unsigned char>(GetColor(x, y).y * 255.f) };
-			unsigned char b{ static_cast<unsigned char>(GetColor(x, y).z * 255.f) };
+			unsigned char r{ static_cast<unsigned char>(GetColor((size_t)x, (size_t)y).x * 255.f) };
+			unsigned char g{ static_cast<unsigned char>(GetColor((size_t)x, (size_t)y).y * 255.f) };
+			unsigned char b{ static_cast<unsigned char>(GetColor((size_t)x, (size_t)y).z * 255.f) };
 
 			unsigned char color[] = { b, g, r };
 
@@ -127,28 +125,28 @@ void Image::ExportImage(const std::string & path)
 
 void Image::SetColor(const std::vector<std::vector<float>>& noiseMap)
 {
-	for (size_t y{}; y < m_Dimensions.y; ++y)
+	for (int y{}; y < m_Dimensions.y; ++y)
 	{
-		for (size_t x{}; x < m_Dimensions.x; ++x)
+		for (int x{}; x < m_Dimensions.x; ++x)
 		{
-			const float value{ noiseMap[y][x] };
+			const float value{ noiseMap[(size_t)y][(size_t)x] };
 
 			DirectX::XMFLOAT3 color{};
 			color.x = value;
 			color.y = value;
 			color.z = value;
-			SetColor(color, x, y);
+			SetColor(color, (size_t)x, (size_t)y);
 		}
 	}
 }
 void Image::SetColor(const std::vector<std::vector<DirectX::XMFLOAT3>>& colorMap)
 {
-	for (size_t y{}; y < m_Dimensions.y; ++y)
+	for (int y{}; y < m_Dimensions.y; ++y)
 	{
-		for (size_t x{}; x < m_Dimensions.x; ++x)
+		for (int x{}; x < m_Dimensions.x; ++x)
 		{
-			const DirectX::XMFLOAT3 value{ colorMap[y][x] };
-			SetColor(value, x, y);
+			const DirectX::XMFLOAT3 value{ colorMap[(size_t)y][(size_t)x] };
+			SetColor(value, (size_t)x, (size_t)y);
 		}
 	}
 }

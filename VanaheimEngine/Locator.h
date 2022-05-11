@@ -41,8 +41,8 @@ class Locator final
 		static void ProvideWindowService(Window* pWindow) { m_pWindow = pWindow; }
 		static Window* const GetWindowService() { return m_pWindow; }
 		// Camera
-		static void ProvideCameraService(CameraComponent* pCameraComponent) { m_pCameraComponent = pCameraComponent; }
-		static CameraComponent* const GetCameraService() { return m_pCameraComponent; }
+		static void ProvideSceneCameraService(CameraComponent* pCameraComponent) { m_pCameraComponent = pCameraComponent; }
+		static CameraComponent* const GetSceneCameraService() { return m_pCameraComponent; }
 		// Timer
 		static void ProvideTimerService(Timer* pTimer) { m_pTimer = pTimer; }
 		static Timer* const GetTimerService() { return m_pTimer; }

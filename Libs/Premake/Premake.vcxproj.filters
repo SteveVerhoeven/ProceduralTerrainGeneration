@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="..">
+      <UniqueIdentifier>{61705900-4DFC-870B-B6AA-880BA255880B}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="..\..">
+      <UniqueIdentifier>{CC6E590B-3883-81BC-0105-251C6DD87DED}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="..\..\Game">
+      <UniqueIdentifier>{F5A7C581-E15F-07CF-4A67-E02A363EA2BF}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="..\..\VanaheimEngine">
+      <UniqueIdentifier>{5A4324DC-46D2-ADA5-EFF0-C1A0DB5EBE4B}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="..\IMGUI">
+      <UniqueIdentifier>{EB597537-D726-D042-0040-BEEAEC6B05D1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="..\yaml_cpp">
+      <UniqueIdentifier>{253FDADA-91F4-52D0-1AE9-4CA7869D49D4}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\Game\premake5.lua">
+      <Filter>..\..\Game</Filter>
+    </None>
+    <None Include="..\..\VanaheimEngine\premake5.lua">
+      <Filter>..\..\VanaheimEngine</Filter>
+    </None>
+    <None Include="..\..\premake5.lua">
+      <Filter>..\..</Filter>
+    </None>
+    <None Include="..\IMGUI\premake5.lua">
+      <Filter>..\IMGUI</Filter>
+    </None>
+    <None Include="..\yaml_cpp\premake5.lua">
+      <Filter>..\yaml_cpp</Filter>
+    </None>
+    <None Include="premake5.lua" />
+  </ItemGroup>
+</Project>

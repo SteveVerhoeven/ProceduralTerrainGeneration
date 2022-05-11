@@ -2,17 +2,12 @@
 // GPU Instancing used
 // Reference: https://www.braynzarsoft.net/viewtutorial/q16390-33-instancing-with-indexed-primitives
 // ********************************
-#include "pch.h"
+#include "VanaheimPCH.h"
 #include "Mesh.h"
 
 #include "Graphics.h"
 #include "OBJParser.h"
-
 #include "Scene.h"
-#include "GameObject.h"
-#include "SceneManager.h"
-
-#include "DebugLogger.h"
 
 Mesh::Mesh()
 	 : Mesh("")

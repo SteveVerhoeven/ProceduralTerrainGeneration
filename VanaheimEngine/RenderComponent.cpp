@@ -1,12 +1,12 @@
-#include "pch.h"
+#include "VanaheimPCH.h"
 #include "RenderComponent.h"
 
-#include "Mesh_Base.h"
 #include "Mesh.h"
 #include "Line.h"
-#include "Material.h"
-
 #include "Timer.h"
+#include "Graphics.h"
+#include "Material.h"
+#include "Mesh_Base.h"
 #include "MathHelper.h"
 
 RenderComponent::RenderComponent()
@@ -25,6 +25,9 @@ void RenderComponent::FixedUpdate(const float /*timeEachUpdate*/)
 
 void RenderComponent::Render3DMesh(ID3D11DeviceContext* pDeviceContext, Mesh* p3DMesh, Material* pEffect)
 {
+	if (!m_CanRenderComponent)
+		return;
+
 	SetBlendingState(pDeviceContext);
 	SetRasterizerState(pDeviceContext);
 	SetFilterMethod(pEffect);
@@ -107,7 +110,6 @@ void RenderComponent::SetInputLayout(ID3D11DeviceContext* pDeviceContext, Mesh_B
 	// Reference: https://docs.microsoft.com/en-us/windows/win32/api/d3d11/nf-d3d11-id3d11devicecontext-iasetinputlayout
 	pDeviceContext->IASetInputLayout(pInputLayout);
 }
-
 void RenderComponent::SetRasterizerState(ID3D11DeviceContext* pDeviceContext)
 {
 	UNREFERENCED_PARAMETER(pDeviceContext);
@@ -285,3 +287,11 @@ void RenderComponent::RenderInstanced(ID3D11DeviceContext* pDeviceContext, Mater
 
 	pMeshBase->SetIsRendered(true);
 }
+
+//void RenderComponent::Serialize(YAML::Emitter& out)
+//{
+//	out << YAML::Key << "RenderComponent";
+//	out << YAML::BeginMap;
+//	out << YAML::Key << "RenderComponent" << YAML::Value << m_CanRenderComponent;
+//	out << YAML::EndMap;
+//}

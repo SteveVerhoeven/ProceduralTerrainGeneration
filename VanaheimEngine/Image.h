@@ -4,7 +4,7 @@
 class Image final
 {
 	public:
-		Image(const DirectX::XMFLOAT2& dimensions);
+		Image(const DirectX::XMINT2& dimensions);
 		virtual ~Image() = default;
 
 		Image(const Image&) = delete;
@@ -21,6 +21,6 @@ class Image final
 
 	protected:
 	private:
-		DirectX::XMFLOAT2 m_Dimensions;
+		DirectX::XMINT2 m_Dimensions;
 		std::vector<DirectX::XMFLOAT3> m_Colors;
 };

@@ -1,5 +1,6 @@
 #pragma once
 #include "Observer.h"
+#include <string>
 
 class Texture final : public Observer
 {
@@ -17,6 +18,7 @@ class Texture final : public Observer
 		virtual void onNotify(ObserverEvent event) override;
 
 		ID3D11ShaderResourceView* GetShaderResourceView() const { return m_pShaderResourceView; };
+		const std::string& GetFilePath() const { return m_Path; }
 
 	private:
 		std::string m_Path;

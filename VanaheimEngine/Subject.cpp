@@ -1,7 +1,5 @@
-#include "pch.h"
+#include "VanaheimPCH.h"
 #include "Subject.h"
-
-#include "Observer.h"
 
 Subject::~Subject()
 {

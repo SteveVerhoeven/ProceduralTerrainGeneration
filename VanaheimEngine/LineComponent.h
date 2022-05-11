@@ -1,7 +1,12 @@
 #pragma once
 #include "Component.h"
+#include <string>
+#include <vector>
 
 class Line;
+class Scene;
+class Texture;
+class Material;
 class LineComponent final : public Component
 {
 	public:
@@ -15,15 +20,18 @@ class LineComponent final : public Component
 	
 		void Render();
 
-		void AddMaterial(Material * pMaterial);
-		void AddTexture(Texture * pTexture) { m_pTextures.push_back(pTexture); }
+		void AddMaterial(Material* pMaterial);
+		void AddTexture(Texture* pTexture) { m_pTextures.push_back(pTexture); }
 
 		Line* GetMesh() const { return m_pLine; }
 		Material* GetMaterial() const { return m_pMaterial; }
 
+		// Serialization
+		//void Serialize(YAML::Emitter& out) override;
+
 	protected:
-		virtual void Initialize(Scene * pParentScene) override;
-		virtual void PostInitialize(Scene * pParentScene) override;
+		virtual void Initialize(Scene* pParentScene) override;
+		virtual void PostInitialize(Scene* pParentScene) override;
 		virtual void Update(const float elapsedSec) override;
 		virtual void FixedUpdate(const float timeEachUpdate) override;
 

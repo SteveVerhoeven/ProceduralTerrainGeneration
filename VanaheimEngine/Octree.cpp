@@ -1,6 +1,6 @@
 /** Original implementation is from: https://www.geeksforgeeks.org/octree-insertion-and-searching/. */
 /** Adjust to fit the purpose of this project */
-#include "pch.h"
+#include "VanaheimPCH.h"
 #include "Octree.h"
 
 #include "Cube.h"

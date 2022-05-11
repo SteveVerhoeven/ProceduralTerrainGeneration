@@ -1,8 +1,5 @@
-#include "pch.h"
+#include "VanaheimPCH.h"
 #include "DebugLogger.h"
-
-#include "UIManager.h"
-#include "ConsoleUI.h"
 
 #include <string>
 #if defined(DEBUG) || defined(_DEBUG)
@@ -11,7 +8,7 @@
 
 void DebugLogger::Initialize()
 {
-	CreateConsoleWindow();
+	//CreateConsoleWindow();
 }
 
 void DebugLogger::Log(const ErrorLevel& errorLevel, const std::string& message)
@@ -19,7 +16,7 @@ void DebugLogger::Log(const ErrorLevel& errorLevel, const std::string& message)
 	const std::string outputMessage{ OutputMessageToConsole(errorLevel, message) };
 	OutputMessageBox(errorLevel, outputMessage);
 
-	Locator::GetUIManagerService()->GetUI<ConsoleUI>()->Log(message);
+	Locator::GetUIManagerService()->GetUI<ConsoleUI>()->AddLog(message.c_str());
 }
 void DebugLogger::LogHRESULT(HRESULT hr, const std::string& functionName, const std::string& file, const std::string& line)
 {

@@ -1,25 +1,12 @@
-#include "pch.h"
+#include "VanaheimPCH.h"
 #include "NoiseGenerator.h"
 
 #include "MathHelper.h"
-#include "GeneratorManager.h"
-
-#include "UIManager.h"
-#include "InspectorUI.h"
-#include "ConsoleUI.h"
-#include "UIData.h"
 
 NoiseGenerator::NoiseGenerator()
-			   : Generator("NoiseGenerator")
-			   , m_NoiseMap(std::vector<std::vector<float>>())
+			   : Generator("Noisegenerator")
 			   , m_HashTable(std::vector<int>())
 			   , m_Permutation(std::vector<int>())
-			   , m_Settings()
-{
-	Initialize();
-}
-
-void NoiseGenerator::Initialize()
 {
 	// Hash lookup table as defined by Ken Perlin.  This is a randomly
 	// arranged array of all numbers from 0-255 inclusive.
@@ -42,150 +29,36 @@ void NoiseGenerator::Initialize()
 	for (int i = 0; i < doubleHashtableSize; ++i)
 		m_Permutation[i] = m_HashTable[i % 256];
 }
-void NoiseGenerator::PostInitialize()
+
+float NoiseGenerator::PerlinNoise(const float xCoord, const float yCoord, const float zCoord)
 {
-	CreateUIData();
+	return GetPerlinNoise(xCoord, yCoord, zCoord);
 }
-
-// Generating
-const std::vector<std::vector<float>>& NoiseGenerator::GenerateNoiseMap(const DirectX::XMFLOAT3& personalOffset)
+float NoiseGenerator::FractalNoise(const DirectX::XMFLOAT3 coords,
+								   const float noiseScale,
+								   const std::vector<DirectX::XMFLOAT3>& offsets,
+								   const float octaves,
+								   const float lacunarity,
+								   const float persistence)
 {
-	// Check if the scale is lower then or equal to zero to prevent division by 0
-	if (!Validate(m_Settings.mapSize, m_Settings.scale))
-	{
-		m_NoiseMap.clear();
-		return m_NoiseMap;
-	}
-
-	// Create a collection of offsets to offset the samples ;)
-	std::vector<DirectX::XMFLOAT3> offsets{};
-	GenerateOffsets(offsets, personalOffset);
-
-	// recalculate the noise
-	if (m_NoiseMap.empty())
-		CalculateNoises(offsets);
-	else
-		RecalculateFractalNoises(offsets);
-
-	// Normalize the values back to [0,1]
-	m_NoiseMap = Normalize2DVector(m_NoiseMap);
-
-	// Generate Image
-	GenerateImage(m_NoiseMap, "./Resources/Textures/Landscape/noiseMap.bmp", m_Settings.mapSize);
-
-	return m_NoiseMap;
+	return GetFractalNoise(coords, noiseScale, offsets, octaves, lacunarity, persistence);
 }
-
-void NoiseGenerator::onNotify(ObserverEvent event)
+float NoiseGenerator::BillowNoise(const float fractalNoise)
 {
-	if (event == ObserverEvent::REBUILD_LANDSCAPE)
-	{
-		GenerateNoiseMap({ 0,0,0 });
-		const std::string message{ "Seed: " + std::to_string(m_Settings.seed)};
-		LOG(ErrorLevel::LOG_INFO, message);
-		//Locator::GetGeneratorManagerService()->GetGenerator<TerrainGenerator>()->GenerateColorMap(m_NoiseMap);
-	}
+	return GetBillowNoise(fractalNoise);
 }
-
-// General
-bool NoiseGenerator::Validate(DirectX::XMFLOAT2& mapSize, float& scale)
+float NoiseGenerator::RidgedNoise(const float billowNoise)
 {
-	const float minScale{ 0.0001f };
-	if (scale <= 0.f)
-		scale = minScale;
-
-	if (mapSize.x < 0 || mapSize.y < 0)
-		return false;
-
-	if (0 < mapSize.x && mapSize.x < 1.f)
-		mapSize.x = 1.f;
-	if (0 < mapSize.y && mapSize.y < 1.f)
-		mapSize.y = 1.f;
-
-	return true;
-}
-void NoiseGenerator::CreateUIData()
-{
-	STInspectorVariable* InspectorVarSeed{ new STInspectorVariable() };
-	STInspectorVariable* InspectorVarOctaves{ new STInspectorVariable() };
-	FInspectorVariable* InspectorVarLacunarity{ new FInspectorVariable() };
-	FInspectorVariable* InspectorVarScale{ new FInspectorVariable() };
-	FInspectorVariable* InspectorVarPersistence{ new FInspectorVariable() };
-
-	InspectorVarSeed->name = "Seed";
-	InspectorVarSeed->value = &m_Settings.seed;
-	InspectorVarSeed->varRange = { 0, 1000 };
-	InspectorVarOctaves->name = "Octaves";
-	InspectorVarOctaves->value = &m_Settings.octaves;
-	InspectorVarOctaves->varRange = { 1, 8 };
-	InspectorVarLacunarity->name = "Lacunarity";
-	InspectorVarLacunarity->value = &m_Settings.lacunarity;
-	InspectorVarLacunarity->varRange = { 1, 10 };
-	InspectorVarScale->name = "Scale";
-	InspectorVarScale->value = &m_Settings.scale;
-	InspectorVarScale->varRange = { 0, 100 };
-	InspectorVarPersistence->name = "Persistence";
-	InspectorVarPersistence->value = &m_Settings.persistence;
-	InspectorVarPersistence->varRange = { 0, 1 };
-
-	UIManager* pUIManager{ Locator::GetUIManagerService() };
-	InspectorUI* pVanaheimUI{ pUIManager->GetUI<InspectorUI>() };
-	if (pVanaheimUI )
-	{
-		pVanaheimUI->StoreVariable(InspectorVarSeed);
-		pVanaheimUI->StoreVariable(InspectorVarOctaves);
-		pVanaheimUI->StoreVariable(InspectorVarLacunarity);
-		pVanaheimUI->StoreVariable(InspectorVarScale);
-		pVanaheimUI->StoreVariable(InspectorVarPersistence);
-	}
+	return GetRidgedNoise(billowNoise);
 }
 
 // Fractal Noise
-void NoiseGenerator::GenerateOffsets(std::vector<DirectX::XMFLOAT3>& offsets, const DirectX::XMFLOAT3& personalOffset)
-{
-	srand(m_Settings.seed);
-	for (size_t i{}; i < m_Settings.octaves; ++i)
-	{
-		DirectX::XMFLOAT3 offset{};
-		offset.x = (float)RandomInt(-100, 100) + personalOffset.x;
-		offset.y = (float)RandomInt(-100, 100) + personalOffset.y;
-		offset.z = (float)RandomInt(-100, 100) + personalOffset.z;
-		offsets.push_back(offset);
-	}
-}
-void NoiseGenerator::CalculateNoises(const std::vector<DirectX::XMFLOAT3>& offsets)
-{
-	for (size_t y{}; y < m_Settings.mapSize.y; ++y)
-	{
-		std::vector<float> vector{};
-		for (size_t x{}; x < m_Settings.mapSize.x; ++x)
-		{
-			const float fractalNoise{ GetFractalNoise((float)x, 1, (float)y, m_Settings.scale, offsets) };
-			const float billowNoise{ GetBillowNoise(fractalNoise) };
-			const float ridgedNoise{ GetRidgedNoise(billowNoise) };
-			vector.push_back(ridgedNoise);
-		}
-		m_NoiseMap.push_back(vector);
-	}
-}
-void NoiseGenerator::RecalculateFractalNoises(const std::vector<DirectX::XMFLOAT3>& offsets)
-{
-	for (size_t y{}; y < m_Settings.mapSize.y; ++y)
-	{
-		for (size_t x{}; x < m_Settings.mapSize.x; ++x)
-		{
-			const float fractalNoise{ GetFractalNoise((float)x, 1, (float)y, m_Settings.scale, offsets) };
-			const float billowNoise{ GetBillowNoise(fractalNoise) };
-			const float ridgedNoise{ GetRidgedNoise(billowNoise) };
-			m_NoiseMap[y][x] = ridgedNoise;
-		}
-	}
-}
-float NoiseGenerator::GetFractalNoise(const float xCoord,
-									  const float yCoord,
-									  const float zCoord,
+float NoiseGenerator::GetFractalNoise(const DirectX::XMFLOAT3 coords,
 									  const float noiseScale,
-									  const std::vector<DirectX::XMFLOAT3>& /*offsets*/)
+									  const std::vector<DirectX::XMFLOAT3>& /*offsets*/,
+									  const float octaves,
+									  const float lacunarity,
+									  const float persistence)
 {
 	float fractalNoise{};
 
@@ -193,11 +66,11 @@ float NoiseGenerator::GetFractalNoise(const float xCoord,
 	float amplitude{ 1 };
 
 	// Calculate the half of the map so that the noiseScale zooms in on the center
-	for (size_t i{}; i < m_Settings.octaves; ++i)
+	for (size_t i{}; i < octaves; ++i)
 	{
-		float sampleX{ xCoord / noiseScale * frequency };
-		float sampleY{ yCoord / noiseScale * frequency };
-		float sampleZ{ zCoord / noiseScale * frequency };
+		float sampleX{ coords.x / noiseScale * frequency };
+		float sampleY{ coords.y / noiseScale * frequency };
+		float sampleZ{ coords.z / noiseScale * frequency };
 
 		// Range is [0,1]
 		float perlinNoise{ GetPerlinNoise(sampleX, sampleY, sampleZ) };
@@ -206,8 +79,8 @@ float NoiseGenerator::GetFractalNoise(const float xCoord,
 
 		fractalNoise += perlinNoise * amplitude;
 
-		frequency *= m_Settings.lacunarity;
-		amplitude *= m_Settings.persistence;
+		frequency *= lacunarity;
+		amplitude *= persistence;
 	}
 
 	return fractalNoise;
@@ -327,11 +200,13 @@ float NoiseGenerator::Lerp(const float a, const float b, const float x)
 	return a + x * (b - a);
 }
 
+// Billow Noise
 float NoiseGenerator::GetBillowNoise(const float fractalNoise)
 {
 	return abs(fractalNoise);
 }
 
+// Ridged Noise
 float NoiseGenerator::GetRidgedNoise(const float billowNoise)
 {
 	return 1 - billowNoise;

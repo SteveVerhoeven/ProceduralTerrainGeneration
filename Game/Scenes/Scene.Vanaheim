@@ -1,0 +1,31 @@
+Scene: Name
+GameObjects:
+  - GameObject: 1235456871354987412
+    NameComponent:
+      Name: Landscape
+    TransformComponent:
+      Pitch: 0
+      Yaw: 0
+      Roll: 0
+      LocalPosition: [0, -1, 0]
+      LocalRotation: [0, 0, 0, 0]
+      LocalScale: [0, 0, 0]
+      WorldPosition: [0, -1, 0]
+      WorldRotation: [0, 0, 0, 1]
+      WorldScale: [1, 1, 1]
+      Forward: [0, 0, 1]
+      Right: [1, 0, 0]
+      Up: [0, 1, 0]
+      WorldUp: [0, 1, 0]
+      World: [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, -1, 0, 1]
+    RenderComponent:
+      RenderComponent: 1
+    ModelComponent:
+      Mesh:
+        FilePath: ./Resources/Meshes/Crap.obj
+      Material:
+        MaterialType: class Material_ProcGen
+        MaterialName: ProceduralGenerator
+        MaterialPath: ./Resources/Shaders/PosCol3D_ProceduralGenerator.fx
+      Textures: [./Resources/Textures/Landscape/noiseMap.bmp, ./Resources/Textures/Landscape/colorMap.bmp]
+      FilePath: ""

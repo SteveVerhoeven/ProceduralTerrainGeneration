@@ -1,10 +1,6 @@
-#include "pch.h"
+#include "VanaheimPCH.h"
 #include "SceneManager.h"
 #include "Scene.h"
-
-#include "UIManager.h"
-#include "GeneratorUI.h"
-#include "DemoUI.h"
 #include "Graphics.h"
 
 SceneManager::SceneManager()
@@ -14,6 +10,8 @@ SceneManager::SceneManager()
 			 , m_ActiveMenuSceneIndex()
 			 , m_MenuActive(true)
 			 , m_GameActive(false)
+			 , m_pGraphics(nullptr)
+			 , m_pUIManager(nullptr)
 {}
 SceneManager::~SceneManager()
 {
@@ -29,6 +27,9 @@ SceneManager::~SceneManager()
 
 void SceneManager::Initialize()
 {
+	m_pGraphics = Locator::GetGraphicsService();
+	m_pUIManager = Locator::GetUIManagerService();
+
 	for (Scene* pScene : m_pMenuScenes)
 		pScene->Initialize();
 
@@ -59,24 +60,31 @@ void SceneManager::FixedUpdate(const float timeEachUpdate)
 	for (Scene* pScene : m_pGameScenes)
 		pScene->FixedUpdate(timeEachUpdate);
 }
-void SceneManager::Render()
+void SceneManager::LateUpdate()
 {
-	Graphics* pGraphics{ Locator::GetGraphicsService() };
-	pGraphics->ClearBackbuffer();	
+	for (Scene* pScene : m_pMenuScenes)
+		pScene->LateUpdate();
 
-
-	UIManager* pUIManager{ Locator::GetUIManagerService() };
-	pUIManager->BeginFrame();
+	for (Scene* pScene : m_pGameScenes)
+		pScene->LateUpdate();
+}
+void SceneManager::Render()
+{	
+	m_pGraphics->ClearBackbuffer();
+	m_pUIManager->BeginFrame();
 	
+	m_pGraphics->SetGameRenderTarget();		// Set the render target for the viewport in the UI
 	for (Scene* pScene : m_pMenuScenes)
 		pScene->Render();
 
 	for (Scene* pScene : m_pGameScenes)
 		pScene->Render();
-		
-	pUIManager->Render();	
-	pUIManager->EndFrame();
-	pGraphics->PresentBackbuffer();
+	
+	m_pGraphics->SetMainRenderTarget();		// Set the render target for the entire program window
+	m_pUIManager->Render();
+
+	m_pUIManager->EndFrame();
+	m_pGraphics->PresentBackbuffer();
 }
 
 void SceneManager::DeactivateAllGameScenes()

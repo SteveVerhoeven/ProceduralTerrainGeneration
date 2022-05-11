@@ -1,6 +1,5 @@
 #pragma once
 #include <Scene.h>
-#include <GeneratorSettings.h>
 
 class Scene_Game final : public Scene
 {
@@ -21,14 +20,17 @@ class Scene_Game final : public Scene
 		virtual void Render() const override;
 
 	private:
-		NoiseGenSettings m_NoiseGenSettings;
-		ProcGenSettings m_ProcGenSettings;
+		/** Function that creates the inputs for the scene camera */
+		void CreateInputs();	// TODO: move to the base class
 
-		void CreateInputs();
-		void CreateMainCamera();
-		void CreateLandscape_2DPlane();
-		void CreateLandscape_VoxelsCPU();
-		void CreateLandscape_VoxelsGPU();
-		void CreateLandscape_2DPlaneOctree(const bool visualizeDataStructure);
-		void CreateLandscape_2DPlaneKDtree();
+		///** Function that creates a landscape from a 2D plane */
+		//void CreateLandscape_2DPlane();
+		///** Function that creates a landscape with voxels on the CPU */
+		//void CreateLandscape_VoxelsCPU();
+		///** Function that creates a landscape with voxels on the GPU */
+		//void CreateLandscape_VoxelsGPU();
+		///** Function that creates a landscape from a 2D plane with the Octree data structure */
+		//void CreateLandscape_2DPlaneOctree(const bool visualizeDataStructure);
+		///** Function that creates a landscape from a 2D plane with the KDTree data structure */
+		//void CreateLandscape_2DPlaneKDtree();
 };

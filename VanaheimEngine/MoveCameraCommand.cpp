@@ -1,10 +1,7 @@
-#include "pch.h"
+#include "VanaheimPCH.h"
 #include "MoveCameraCommand.h"
 
-#include "SceneManager.h"
 #include "Scene.h"
-#include "GameObject.h"
-#include "TransformComponent.h"
 #include "Timer.h"
 
 MoveCameraCommand::MoveCameraCommand(const bool moveForward, const bool moveBackward, const bool moveLeft, const bool moveRight)
@@ -14,12 +11,13 @@ MoveCameraCommand::MoveCameraCommand(const bool moveForward, const bool moveBack
 				  , m_MoveRight(moveRight)
 				  , m_MoveSpeed(2500.f)
 				  , m_pCameraObject(nullptr)
-{
-	SetCameraObject();
-}
+{}
 
 void MoveCameraCommand::Execute()
 {
+	if (m_pCameraObject == nullptr)
+		SetCameraObject();
+
 	Move();
 }
 
@@ -73,5 +71,5 @@ void MoveCameraCommand::SetCameraObject()
 {
 	SceneManager* pSceneManager{ Locator::GetSceneManagerService() };
 	Scene* pScene{ pSceneManager->GetActiveGameScene() };
-	m_pCameraObject = pScene->GetObjectByName("Camera-Main");
+	m_pCameraObject = pScene->GetSceneCamera();
 }

@@ -1,4 +1,4 @@
-#include "pch.h"
+#include "VanaheimPCH.h"
 #include "Texture.h"
 
 #include "Window.h"
@@ -41,7 +41,7 @@ void Texture::Initialize(const std::string& filePath)
 
 	// Explanation for all parameters in link below
 	// Reference: https://docs.microsoft.com/en-us/windows/win32/api/d3d11/nf-d3d11-id3d11device-createshaderresourceview
-	Locator::GetDebugLoggerService()->LogHRESULT(DirectX::CreateShaderResourceView(pD3DDevice, srcImages, nimages, metadata, ppSRV), "Texture::Initialize", __FILE__, std::to_string(__LINE__));
+	LOG_HRESULT(DirectX::CreateShaderResourceView(pD3DDevice, srcImages, nimages, metadata, ppSRV), "Texture::Initialize", __FILE__, std::to_string(__LINE__));
 
 	DELETE_POINTER(pImage);
 }
@@ -62,9 +62,15 @@ void Texture::LoadImageFromFile(DirectX::ScratchImage* pImage, DirectX::TexMetad
 	std::wstring widePath = std::wstring(filePath.begin(), filePath.end());
 
 	if (extension.find(".dds") != std::string::npos)
-		Locator::GetDebugLoggerService()->LogHRESULT(LoadFromDDSFile(widePath.c_str(), DirectX::DDS_FLAGS_NONE, &info, *pImage), "Texture::LoadImageFromFile", __FILE__, std::to_string(__LINE__));
+	{
+		LOG_HRESULT(LoadFromDDSFile(widePath.c_str(), DirectX::DDS_FLAGS_NONE, &info, *pImage), "Texture::LoadImageFromFile", __FILE__, std::to_string(__LINE__));
+	}
 	else if (extension.find(".tga") != std::string::npos)
-		Locator::GetDebugLoggerService()->LogHRESULT(LoadFromTGAFile(widePath.c_str(), &info, *pImage), "Texture::LoadImageFromFile", __FILE__, std::to_string(__LINE__));
+	{
+		LOG_HRESULT(LoadFromTGAFile(widePath.c_str(), &info, *pImage), "Texture::LoadImageFromFile", __FILE__, std::to_string(__LINE__));
+	}
 	else
-		Locator::GetDebugLoggerService()->LogHRESULT(LoadFromWICFile(widePath.c_str(), DirectX::TEX_FILTER_DEFAULT, &info, *pImage), "Texture::LoadImageFromFile", __FILE__, std::to_string(__LINE__));
+	{
+		LOG_HRESULT(LoadFromWICFile(widePath.c_str(), DirectX::TEX_FILTER_DEFAULT, &info, *pImage), "Texture::LoadImageFromFile", __FILE__, std::to_string(__LINE__));
+	}
 }

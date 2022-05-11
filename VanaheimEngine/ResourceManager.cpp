@@ -1,15 +1,11 @@
-#include "pch.h"
+#include "VanaheimPCH.h"
 #include "ResourceManager.h"
 
 #include "Mesh.h"
 #include "Line.h"
 #include "Material.h"
 #include "Texture.h"
-
-#include "GameObject.h"
-
 #include "Graphics.h"
-
 #include <algorithm>
 
 ResourceManager::ResourceManager()

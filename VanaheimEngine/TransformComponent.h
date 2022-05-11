@@ -1,6 +1,7 @@
 #pragma once
 #include "Component.h"
 
+class Scene;
 class TransformComponent final : public Component
 {
 	public:
@@ -22,21 +23,40 @@ class TransformComponent final : public Component
 		void Scale(const DirectX::XMFLOAT3& scale, const bool localChange);
 		void Scale(const float x, const float y, const float z, const bool localChange);
 
-		DirectX::XMFLOAT3 GetPosition() const { return m_Position; }
-		DirectX::XMFLOAT3 GetWorldPosition() const { return m_WorldPosition; }
-		DirectX::XMFLOAT4 GetRotation() const { return m_Rotation; }
-		DirectX::XMFLOAT4 GetWorldRotation() const { return m_WorldRotation; }
-		DirectX::XMFLOAT4 GetRotationEuler() const;
-		DirectX::XMFLOAT4 GetWorldRotationEuler() const;
-		DirectX::XMFLOAT3 GetScale() const { return m_Scale; }
-		DirectX::XMFLOAT3 GetWorldScale() const { return m_WorldScale; }
-
-		DirectX::XMFLOAT3 GetForward() const { return m_Forward; }
-		DirectX::XMFLOAT3 GetRight() const { return m_Right; }
-		DirectX::XMFLOAT3 GetUp() const { return m_Up; }
-		DirectX::XMFLOAT3 GetWorldUp() const { return m_WorldUp; }
-
+		const DirectX::XMFLOAT3& GetPosition() const { return m_Position; }
+		const DirectX::XMFLOAT3& GetWorldPosition() const { return m_WorldPosition; }
+		const DirectX::XMFLOAT4& GetRotation() const { return m_Rotation; }
+		const DirectX::XMFLOAT4& GetWorldRotation() const { return m_WorldRotation; }
+		DirectX::XMFLOAT4		 GetRotationEuler() const;
+		DirectX::XMFLOAT4		 GetWorldRotationEuler() const;
+		const DirectX::XMFLOAT3& GetScale() const { return m_Scale; }
+		const DirectX::XMFLOAT3& GetWorldScale() const { return m_WorldScale; }		 					   
+		const DirectX::XMFLOAT3& GetForward() const { return m_Forward; }
+		const DirectX::XMFLOAT3& GetRight() const { return m_Right; }
+		const DirectX::XMFLOAT3& GetUp() const { return m_Up; }
+		const DirectX::XMFLOAT3& GetWorldUp() const { return m_WorldUp; }
 		DirectX::XMFLOAT4X4 GetWorld();
+		const float GetPitch() const { return m_Pitch; }
+		const float GetYaw() const { return m_Yaw; }
+		const float GetRoll() const { return m_Roll; }
+
+		void SetPitch(const float pitch) { m_Pitch = pitch; }
+		void SetYaw(const float yaw) { m_Yaw = yaw; }
+		void SetRoll(const float roll) { m_Roll = roll; }
+		void SetLocalPosition(const DirectX::XMFLOAT3& position) { m_Position = position; }
+		void SetLocalRotation(const DirectX::XMFLOAT4& rotation) { m_Rotation = rotation; }
+		void SetLocalScale(const DirectX::XMFLOAT3& scale) { m_Scale = scale; }
+		void SetWorldPosition(const DirectX::XMFLOAT3& position) { m_WorldPosition = position; }
+		void SetWorldRotation(const DirectX::XMFLOAT4& rotation) { m_WorldRotation = rotation; }
+		void SetWorldScale(const DirectX::XMFLOAT3& scale) { m_WorldScale = scale; }
+		void SetForward(const DirectX::XMFLOAT3& forward) { m_Forward = forward; }
+		void SetRight(const DirectX::XMFLOAT3& right) { m_Right = right; }
+		void SetUp(const DirectX::XMFLOAT3& up) { m_Up = up; }
+		void SetWorldUp(const DirectX::XMFLOAT3& worldUp) { m_WorldUp = worldUp; }
+		void SetWorld(const DirectX::XMFLOAT4X4& world) { m_World = world; }
+
+		// Serialization
+		//void Serialize(YAML::Emitter& out) override;
 
 	protected:
 		virtual void Initialize(Scene* pParentScene) override;

@@ -1,15 +1,17 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Scenes">
-      <UniqueIdentifier>{c623ee42-c21c-4b81-acce-261562a453da}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Game">
-      <UniqueIdentifier>{25e9d289-0151-4234-b8a3-cc25e651f424}</UniqueIdentifier>
-    </Filter>
+    <ClCompile Include="Main.cpp" />
+    <ClCompile Include="GamePCH.cpp" />
+    <ClCompile Include="Scene_Game.cpp">
+      <Filter>Scenes</Filter>
+    </ClCompile>
+    <ClCompile Include="VGame.cpp">
+      <Filter>Game</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="pch.h" />
+    <ClInclude Include="GamePCH.h" />
     <ClInclude Include="Scene_Game.h">
       <Filter>Scenes</Filter>
     </ClInclude>
@@ -18,13 +20,11 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="pch.cpp" />
-    <ClCompile Include="Main.cpp" />
-    <ClCompile Include="Scene_Game.cpp">
-      <Filter>Scenes</Filter>
-    </ClCompile>
-    <ClCompile Include="VGame.cpp">
-      <Filter>Game</Filter>
-    </ClCompile>
+    <Filter Include="Game">
+      <UniqueIdentifier>{fa536a45-d304-4a98-91a6-8a3170540942}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scenes">
+      <UniqueIdentifier>{35b33ddf-c8f4-4111-b39f-fa7a896a6457}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
 </Project>

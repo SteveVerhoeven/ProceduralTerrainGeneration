@@ -1,14 +1,11 @@
-#include "pch.h"
+#include "VanaheimPCH.h"
 #include "Cube.h"
 
 #include "Scene.h"
 #include "Line.h"
-
-#include "SceneManager.h"
-#include "GameObject.h"
 #include "Graphics.h"
 
-void Cube::CreateLines(Scene * pScene, const DirectX::XMFLOAT3& pos_TopLeftFront, const DirectX::XMFLOAT3& pos_BottomRightBack)
+void Cube::CreateLines(Scene* pScene, const DirectX::XMFLOAT3& pos_TopLeftFront, const DirectX::XMFLOAT3& pos_BottomRightBack)
 {
     // Finding the width & height
     const float width{ pos_BottomRightBack.x - pos_TopLeftFront.x };

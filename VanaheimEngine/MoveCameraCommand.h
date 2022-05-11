@@ -1,6 +1,7 @@
 #pragma once
 #include "Command.h"
 
+class GameObject;
 class MoveCameraCommand final : public Command
 {
 	public:

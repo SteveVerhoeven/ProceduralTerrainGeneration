@@ -1,5 +1,6 @@
 #pragma once
 #include "Mesh_Base.h"
+#include <vector>
 
 enum class LineType
 {

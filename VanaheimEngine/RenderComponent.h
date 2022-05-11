@@ -1,9 +1,11 @@
 #pragma once
 #include "Component.h"
 
-class Mesh_Base;
+class Mesh;
 class Line;
+class Scene;
 class Material;
+class Mesh_Base;
 class RenderComponent final : public Component
 {
 	public:
@@ -19,7 +21,11 @@ class RenderComponent final : public Component
 		void RenderLine(ID3D11DeviceContext* pDeviceContext, Line* pLine, Material* pEffect);
 
 		void EnableRenderComponent() { m_CanRenderComponent = true; }
+		void SetCanRenderComponent(const bool canRenderComponent) { m_CanRenderComponent = canRenderComponent; }
 		bool GetCanRenderComponent() const { return m_CanRenderComponent; }
+		
+		// Serialization
+		//void Serialize(YAML::Emitter& out) override;
 
 	protected:
 		virtual void Initialize(Scene* pParentScene) override;
@@ -37,8 +43,6 @@ class RenderComponent final : public Component
 		void SetVertexBuffers(ID3D11DeviceContext* pDeviceContext, Mesh* pMeshBase);
 		void SetVertexBuffers(ID3D11DeviceContext* pDeviceContext, Line* pMeshBase);
 		void SetIndexBuffers(ID3D11DeviceContext* pDeviceContext, Mesh_Base* pMeshBase);
-		void SetConstantBuffers(ID3D11DeviceContext* pDeviceContext, Mesh* pMeshBase);
-		void SetConstantBuffers(ID3D11DeviceContext* pDeviceContext, Line* pMeshBase);
 		void SetInputLayout(ID3D11DeviceContext* pDeviceContext, Mesh_Base* pMeshBase);
 		void SetPrimTopology(ID3D11DeviceContext* pDeviceContext, const D3D11_PRIMITIVE_TOPOLOGY& topology);
 		void Render(ID3D11DeviceContext* pDeviceContext, Material* pEffect, Mesh* pMeshBase);

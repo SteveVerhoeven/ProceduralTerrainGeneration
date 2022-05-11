@@ -1,4 +1,4 @@
-#include "pch.h"
+#include "VanaheimPCH.h"
 #include "Voxel.h"
 
 Voxel::Voxel(std::vector<Vertex_Input>& vertices, std::vector<uint32_t>& indices, const DirectX::XMFLOAT3& position, const DirectX::XMFLOAT2& size, const float bottomModifier)

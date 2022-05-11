@@ -1,12 +1,5 @@
-#include "pch.h"
+#include "VanaheimPCH.h"
 #include "OBJParser.h"
-
-// General includes
-#include <string>
-#include <fstream>
-#include <iostream>
-#include <vector>
-#include <sstream>
 
 struct VertexCheck
 {
@@ -70,28 +63,31 @@ void OBJParser::LoadModel(const std::string& givenName, const std::string& fileP
 		}
 		else if (line.substr(0, 2) == "f ")
 		{
-			std::istringstream s(line.substr(1));
-			unsigned short v1, v2, v3;
-			s >> v1 >> v2 >> v3;
+			std::istringstream s(line.substr(2));
+			char slash; // To catch the / between the numbers
+			unsigned short v1, vt1, vn1, v2, vt2, vn2, v3, vt3, vn3;
+			s >> v1 >> slash >> vt1 >> slash >> vn1;
+			s >> v2 >> slash >> vt2 >> slash >> vn2;
+			s >> v3 >> slash >> vt3 >> slash >> vn3;
 
 			Vertex_Input vert0{};
-			vert0.Position	= DirectX::XMFLOAT3{ positions[--v1] };
-			vert0.Color = DirectX::XMFLOAT3{ 1.f, 0.f, 0.f };
-			//vert0.UV		= DirectX::XMFLOAT2{ UVs[vt1] };
+			vert0.Position	= DirectX::XMFLOAT3{ positions[v1] };
+			vert0.Color		= DirectX::XMFLOAT3{ 1.f, 0.f, 0.f };
+			vert0.UV		= DirectX::XMFLOAT2{ UVs[vt1] };
 			//vert0.Normal	= DirectX::XMFLOAT3{ normals[--vn1] };
 			//vert0.Tangent  += Elite::GetNormalized(Elite::Reject(Elite::FVector3{ tangent.x, tangent.y, -tangent.z }, normals[vn1]));
 
 			Vertex_Input vert1{};
-			vert1.Position	= DirectX::XMFLOAT3{ positions[--v2] };
-			vert1.Color = DirectX::XMFLOAT3{ 0.f, 0.f, 1.f };
-			//vert1.UV		= DirectX::XMFLOAT2{ UVs[vt2] };
+			vert1.Position	= DirectX::XMFLOAT3{ positions[v2] };
+			vert1.Color		= DirectX::XMFLOAT3{ 0.f, 0.f, 1.f };
+			vert1.UV		= DirectX::XMFLOAT2{ UVs[vt2] };
 			//vert1.Normal	= DirectX::XMFLOAT3{ normals[--vn2] };
 			//vert1.Tangent += Elite::GetNormalized(Elite::Reject(Elite::FVector3{ tangent.x, tangent.y, -tangent.z }, normals[vn2]));
 
 			Vertex_Input vert2{};
-			vert2.Position	= DirectX::XMFLOAT3{ positions[--v3] };
-			vert2.Color	= DirectX::XMFLOAT3{ 0.f, 1.f, 0.f };
-			//vert2.UV		= DirectX::XMFLOAT2{ UVs[vt3] };
+			vert2.Position	= DirectX::XMFLOAT3{ positions[v3] };
+			vert2.Color		= DirectX::XMFLOAT3{ 0.f, 1.f, 0.f };
+			vert2.UV		= DirectX::XMFLOAT2{ UVs[vt3] };
 			//vert2.Normal	= DirectX::XMFLOAT3{ normals[--vn3] };
 			//vert2.Tangent += Elite::GetNormalized(Elite::Reject(Elite::FVector3{ tangent.x, tangent.y, -tangent.z }, normals[vn3]));
 

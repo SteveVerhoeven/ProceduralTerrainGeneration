@@ -1,16 +1,8 @@
-#include "pch.h"
+#include "VanaheimPCH.h"
 #include "Line.h"
 
 #include "Scene.h"
 #include "Graphics.h"
-#include "GameObject.h"
-#include "SceneManager.h"
-#include "LineComponent.h"
-
-// UI
-#include "UIData.h"
-#include "InspectorUI.h"
-#include "UIManager.h"
 
 Line::Line(const DirectX::XMFLOAT3& /*position_Start*/, const DirectX::XMFLOAT3& /*position_End*/, const LineType& LineType, const float length, const float height)
 	 : Mesh_Base()
@@ -68,19 +60,19 @@ void Line::PostInitialize(Material* pMaterial)
 	hr = CreateInstanceBufferLengthV2(pDevice);
 	pLogger->LogHRESULT(hr, "Line::CreateInstanceBufferLengthV2", __FILE__, std::to_string(__LINE__));
 
-	BInspectorVariable* InspectorVarRenderUI{ new BInspectorVariable() };
-	if (m_LineType == LineType::HORIZONTAL_X)
-		InspectorVarRenderUI->name = "Render x-axis Lines (Right)";
-	else if (m_LineType == LineType::HORIZONTAL_Z)
-		InspectorVarRenderUI->name = "Render z-axis Lines (Front)";
-	else 
-		InspectorVarRenderUI->name = "Render y-axis Lines (Up)";
-	InspectorVarRenderUI->value = &m_RenderLine;
-	InspectorVarRenderUI->varRange = { 0, 0 };
-	UIManager* pUIManager{ Locator::GetUIManagerService() };
-	InspectorUI* pVanaheimUI{ pUIManager->GetUI<InspectorUI>() };
-	if (pVanaheimUI)
-		pVanaheimUI->StoreVariable(InspectorVarRenderUI);
+	//BInspectorVariable* InspectorVarRenderUI{ new BInspectorVariable() };
+	//if (m_LineType == LineType::HORIZONTAL_X)
+	//	InspectorVarRenderUI->name = "Render x-axis Lines (Right)";
+	//else if (m_LineType == LineType::HORIZONTAL_Z)
+	//	InspectorVarRenderUI->name = "Render z-axis Lines (Front)";
+	//else 
+	//	InspectorVarRenderUI->name = "Render y-axis Lines (Up)";
+	//InspectorVarRenderUI->value = &m_RenderLine;
+	//InspectorVarRenderUI->varRange = { 0, 0 };
+	//UIManager* pUIManager{ Locator::GetUIManagerService() };
+	//InspectorUI* pVanaheimUI{ pUIManager->GetUI<InspectorUI>() };
+	//if (pVanaheimUI)
+	//	pVanaheimUI->StoreVariable(InspectorVarRenderUI);
 
 	// ********************************
 	// Set that the mesh is initialized

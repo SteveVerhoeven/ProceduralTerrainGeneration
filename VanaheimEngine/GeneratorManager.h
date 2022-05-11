@@ -1,5 +1,4 @@
 #pragma once
-#include "GeneratorData.h"
 
 class Generator;
 class GeneratorManager final
@@ -17,15 +16,15 @@ class GeneratorManager final
 		T* GetGenerator() const;
 
 	private:
-		std::vector<GeneratorData*> m_pGenerators;
+		std::vector<Generator*> m_pGenerators;
 };
 
 template<class T>
 inline T* GeneratorManager::GetGenerator() const
 {
-	for (GeneratorData* pGData : m_pGenerators)
+	for (Generator* pGenerator : m_pGenerators)
 	{
-		T* pTGen = dynamic_cast<T*>(pGData->pGenerator);
+		T* pTGen = dynamic_cast<T*>(pGenerator);
 		if (pTGen)
 			return pTGen;
 	}

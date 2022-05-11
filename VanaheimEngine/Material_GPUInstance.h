@@ -1,6 +1,7 @@
 #pragma once
 #include "Material.h"
 
+class GameObject;
 class Material_GPUInstance final : public Material
 {
 	public:

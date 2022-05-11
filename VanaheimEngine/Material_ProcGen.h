@@ -3,6 +3,7 @@
 #include <vector>
 
 class Texture;
+class GameObject;
 class Material_ProcGen final : public Material
 {
 	public:
@@ -18,6 +19,8 @@ class Material_ProcGen final : public Material
 		void Update(GameObject* pParentGameObject) override;
 
 		void AddTexture(Texture* pTexture) { m_pTextures.push_back(pTexture); }
+		Texture* GetTexture(const int id) const { return m_pTextures[id]; }
+		const std::vector<Texture*>& GetTextures() const { return m_pTextures; }
 
 	protected:
 

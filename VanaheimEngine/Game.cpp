@@ -1,9 +1,10 @@
-#include "pch.h"
+#include "VanaheimPCH.h"
 #include "Game.h"
 
 #include "Timer.h"
 #include "InputManager.h"
 #include "SceneManager.h"
+#include "UIManager.h"
 
 #include "VanaheimEngine.h"
 
@@ -19,6 +20,14 @@ Game::~Game()
 void Game::Initialize(HINSTANCE hInstance)
 {
 	m_pEngine->Initialize(hInstance);
+
+	UIManager* pUIManager{ Locator::GetUIManagerService() };
+	pUIManager->Initialize();
+}
+void Game::PostInitialize()
+{
+	UIManager* pUIManager{ Locator::GetUIManagerService() };
+	pUIManager->PostInitialize();
 }
 int Game::GameLoop()
 {
@@ -45,6 +54,7 @@ int Game::GameLoop()
 			pTimer->SubtractFixedUpdateFromLag();
 		}
 		sceneManager->Update(elapsedSec);
+		sceneManager->LateUpdate();
 
 		// Render game
 		sceneManager->Render();

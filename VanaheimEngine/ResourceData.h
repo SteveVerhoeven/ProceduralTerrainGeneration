@@ -1,4 +1,5 @@
 #pragma once
+#include "VanaheimPCH.h"
 #include <string>
 
 #include "Mesh.h"
@@ -16,7 +17,9 @@ struct MeshData
 		, pMesh(pMesh)
 	{}
 	~MeshData()
-	{ DELETE_POINTER(pMesh); }
+	{ 
+		DELETE_POINTER(pMesh); 
+	}
 
 	int ID{};
 	std::string name{};

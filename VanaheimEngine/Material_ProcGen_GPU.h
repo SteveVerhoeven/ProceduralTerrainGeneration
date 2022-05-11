@@ -3,6 +3,7 @@
 #include <vector>
 
 class Texture;
+class GameObject;
 class Material_ProcGen_GPU final : public Material
 {
 	public:

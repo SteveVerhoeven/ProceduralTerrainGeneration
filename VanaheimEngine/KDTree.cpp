@@ -1,6 +1,6 @@
 /** Original implementation is from: https://www.geeksforgeeks.org/k-dimensional-tree/#:~:text=A%20K%2DD%20Tree(also%20called,in%20a%20K%2DDimensional%20space. */
 /** Adjust to fit the purpose of this project */
-#include "pch.h"
+#include "VanaheimPCH.h"
 #include "KDTree.h"
 
 KDTree::KDTree()

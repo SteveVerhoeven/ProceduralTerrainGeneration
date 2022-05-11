@@ -1,4 +1,7 @@
 #pragma once
+#include <vector>
+
+struct Vertex_Input;
 class Voxel final
 {
 	public:

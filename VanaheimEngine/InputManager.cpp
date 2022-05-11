@@ -1,32 +1,25 @@
-#include "pch.h"
+#include "VanaheimPCH.h"
 #pragma comment(lib, "XInput.lib")
 #include "InputManager.h"
 
 #include "Command.h"
 #include "RotateCameraCommand.h"
-
 #include "Window.h"
-#include "imgui.h"
-
-#include "UIManager.h"
-#include "ConsoleUI.h"
+#include "Mouse.h"
 
 InputManager::InputManager()
-			 : m_MousePosition()
-			 , m_OldMousePosition()
-			 , m_ControllerState()
+			 : m_ControllerState()
 			 , m_pInputs(std::vector<InputData*>())
-{
-	Window* pWindow{ Locator::GetWindowService() };
-	m_MousePosition.x = pWindow->GetWindowWidth() / 2;
-	m_MousePosition.y = pWindow->GetWindowHeight() / 2;
-}
+			 , m_pMouse(new Mouse())
+			 , m_QuitGame(false)
+{}
 InputManager::~InputManager()
 {
 	for (InputData* pInputData : m_pInputs)
 		DELETE_POINTER(pInputData);
 
 	m_pInputs.clear();
+	DELETE_POINTER(m_pMouse);
 }
 
 MSG InputManager::ProcessInput(const float /*elapsedSec*/)
@@ -43,6 +36,15 @@ MSG InputManager::ProcessInput(const float /*elapsedSec*/)
 		return msg;
 	}
 
+	if (m_QuitGame)
+	{
+		msg.message = WM_QUIT;
+		return msg;
+	}
+
+	// Update mouse movement
+	m_pMouse->ProcessMouseInputs();
+
 	return msg;
 }
 bool InputManager::ProcessWindowsEvents(MSG& msg)
@@ -58,19 +60,19 @@ bool InputManager::ProcessWindowsEvents(MSG& msg)
 
 		if (msg.wParam == 'G' && msg.message == WM_KEYUP)
 		{
-			m_MouseInputAccepted = !m_MouseInputAccepted;
-
-			LOG(ErrorLevel::LOG_INFO, "Rotating (0 = disabled // 1 = enabled): " + std::to_string(m_MouseInputAccepted) + '\n');
+			if (m_pMouse->GetMouseActive())
+				m_pMouse->DeactivateMouseInput();
+			else
+				m_pMouse->ActivateMouseInput();
 		}
 
 		// Mouse rotation
 		/* TODO: Snapping problem: When moving the mouse, it starts from the old position instead of the new one */
-		if (m_MouseInputAccepted && msg.wParam == VK_RBUTTON && msg.message == WM_MOUSEMOVE)
+		if (m_pMouse->GetMouseActive() && msg.message == WM_MOUSEMOVE)
 		{
 			LOG(ErrorLevel::LOG_INFO, "Moving\n");
 
-			POINT mousePos{ GetMousePosition() };
-			POINT mouseMov{ GetMouseMovement() };
+			POINT mouseMov{ m_pMouse->GetMouseMovement() };
 
 			DirectX::XMFLOAT2 mouse{};
 			mouse.x = float(mouseMov.x);
@@ -78,7 +80,7 @@ bool InputManager::ProcessWindowsEvents(MSG& msg)
 
 			Command* pCommand{ GetCommand(ControllerButton::ButtonLThumbStick) };
 			RotateCameraCommand* pRotateCommand{ dynamic_cast<RotateCameraCommand*>(pCommand) };
-			pRotateCommand->SetMousePos(mouse);
+			pRotateCommand->SetMouseMovement(mouse);
 			pCommand->Execute();
 		}
 	}
@@ -159,42 +161,4 @@ Command* InputManager::GetCommand(const KeyboardButton& kButton)
 		return (*result)->commandData.pCommand;
 
 	return nullptr;
-}
-POINT InputManager::GetMousePosition()
-{
-	m_OldMousePosition = m_MousePosition;
-
-	// ***************************
-	// Getting the mouse position
-	// ***************************
-	// Reference - HOW TO: https://stackoverflow.com/questions/20175342/windows-to-directx-mouse-coordinates
-	Window* pWindow{ Locator::GetWindowService() };
-	/* GetCursorPos - Parameters */
-	LPPOINT lpPoint{ &m_MousePosition };
-
-	// Explanation for all parameters in link below
-	// Reference: https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-getcursorpos
-	if (GetCursorPos(lpPoint))
-	{
-		// *****************************************************
-		// Convert Screen coordinates to client-area coordinates
-		// *****************************************************
-		/* ScreenToClient - Parameters */
-		HWND    hWnd{ pWindow->GetWindowHandle() };
-		// LPPOINT lpPoint{}; 
-
-		// Explanation for all parameters in link below
-		// Reference: https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-screentoclient
-		ScreenToClient(hWnd, lpPoint);
-	}
-
-	return m_MousePosition;
-}
-POINT InputManager::GetMouseMovement() const
-{
-	POINT movement{};
-	movement.x = m_OldMousePosition.x - m_MousePosition.x;
-	movement.y = m_OldMousePosition.y - m_MousePosition.y;
-
-	return movement;
 }

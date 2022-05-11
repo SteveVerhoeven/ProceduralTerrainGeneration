@@ -1,4 +1,4 @@
-#include "pch.h"
+#include "VanaheimPCH.h"
 #include "Material.h"
 
 #include "GameObject.h"
@@ -70,7 +70,7 @@ void Material::Update(GameObject* pParentGameObject)
 {
 	using namespace DirectX;
 
-	CameraComponent* pCameraComponent{ Locator::GetCameraService() };
+	CameraComponent* pCameraComponent{ Locator::GetSceneCameraService() };
 	TransformComponent* pTransformComponent{ pParentGameObject->GetComponent<TransformComponent>() };
 
 	DirectX::XMFLOAT4X4 world{ pTransformComponent->GetWorld() };
@@ -85,7 +85,7 @@ void Material::Update(GameObject* pParentGameObject)
 
 	HRESULT hr{ m_pMat_WorldViewProjVariable->SetMatrix((float*)&wvp) };
 	if (FAILED(hr))
-		Locator::GetDebugLoggerService()->LogHRESULT(hr, "Material::Update", __FILE__, std::to_string(__LINE__));
+		LOG_HRESULT(hr, "Material::Update", __FILE__, std::to_string(__LINE__));
 }
 
 // ------------------------------------
@@ -119,7 +119,7 @@ ID3DX11Effect* Material::LoadEffect(ID3D11Device* pDevice, const std::string& ef
 		// -------------
 		// Log the error
 		// -------------
-		Locator::GetDebugLoggerService()->LogHRESULT(result, "Material::LoadEffect", __FILE__, std::to_string(__LINE__));
+		LOG_HRESULT(result, "Material::LoadEffect", __FILE__, std::to_string(__LINE__));
 		if (pErrorBlob != nullptr)
 		{
 			char* pErrors = (char*)pErrorBlob->GetBufferPointer();
@@ -246,5 +246,5 @@ void Material::CreateSamplerStates(ID3D11Device* pDevice, const D3D11_FILTER& fi
 	// Explanation for all parameters in link below
 	// Reference: https://docs.microsoft.com/en-us/windows/win32/api/d3d11/nf-d3d11-id3d11device-createsamplerstate
 	HRESULT hr{ pDevice->CreateSamplerState(pSamplerStateDesc, ppSamplerState) };
-	Locator::GetDebugLoggerService()->LogHRESULT(hr, "Material::CreateSamplerStates", std::string(__FILE__), std::to_string(__LINE__));
+	LOG_HRESULT(hr, "Material::CreateSamplerStates", std::string(__FILE__), std::to_string(__LINE__));
 }

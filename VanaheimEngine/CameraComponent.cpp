@@ -1,11 +1,13 @@
-#include "pch.h"
+#include "VanaheimPCH.h"
 #include "CameraComponent.h"
 
 #include "GameObject.h"
 #include "Window.h"
+#include "Scene.h"
 
 CameraComponent::CameraComponent()
 				: Component()
+				, m_IsMainCamera(false)
 				// Dirty Flag pattern
 				// Reference: https://gameprogrammingpatterns.com/dirty-flag.html
 				, m_UpdateView(false)
@@ -31,7 +33,7 @@ CameraComponent::CameraComponent()
 }
 
 void CameraComponent::Initialize(Scene* /*pParentScene*/)
-{ Locator::ProvideCameraService(this); }
+{}
 void CameraComponent::PostInitialize(Scene* /*pParentScene*/)
 {}
 void CameraComponent::Update(const float /*elapsedSec*/)
@@ -39,7 +41,7 @@ void CameraComponent::Update(const float /*elapsedSec*/)
 void CameraComponent::FixedUpdate(const float /*timeEachUpdate*/)
 {}
 
-DirectX::XMFLOAT4X4 CameraComponent::GetView()
+const DirectX::XMFLOAT4X4& CameraComponent::GetView()
 {
 	// To be able to do XMVECTOR + XMVECTOR
 	// Reference: https://stackoverflow.com/questions/21688529/binary-directxxmvector-does-not-define-this-operator-or-a-conversion
@@ -74,7 +76,7 @@ DirectX::XMFLOAT4X4 CameraComponent::GetView()
 
 	return m_View;
 }
-DirectX::XMFLOAT4X4 CameraComponent::GetProjection()
+const DirectX::XMFLOAT4X4& CameraComponent::GetProjection()
 {
 	//if (m_UpdateProjection)
 	{
@@ -100,7 +102,7 @@ DirectX::XMFLOAT4X4 CameraComponent::GetProjection()
 
 	return m_Projection;
 }
-DirectX::XMFLOAT4X4 CameraComponent::GetViewProjection()
+const DirectX::XMFLOAT4X4& CameraComponent::GetViewProjection()
 {
 	// To be able to do XMMATRIX * XMMATRIX
 	// Reference: https://stackoverflow.com/questions/21688529/binary-directxxmvector-does-not-define-this-operator-or-a-conversion
@@ -124,7 +126,7 @@ DirectX::XMFLOAT4X4 CameraComponent::GetViewProjection()
 
 	return m_ViewProjection;
 }
-DirectX::XMFLOAT4X4 CameraComponent::GetViewInverse()
+const DirectX::XMFLOAT4X4& CameraComponent::GetViewInverse()
 {
 	if (m_UpdateViewInverse)
 	{
@@ -151,7 +153,7 @@ DirectX::XMFLOAT4X4 CameraComponent::GetViewInverse()
 
 	return m_ViewInverse;
 }
-DirectX::XMFLOAT4X4 CameraComponent::GetViewProjectionInverse()
+const DirectX::XMFLOAT4X4& CameraComponent::GetViewProjectionInverse()
 {
 	if (m_UpdateViewProjectionInverse)
 	{
@@ -182,3 +184,45 @@ DirectX::XMFLOAT4X4 CameraComponent::GetViewProjectionInverse()
 
 	return m_ViewProjectionInverse;
 }
+
+void CameraComponent::SetIsMainCamera(const bool isMainCamera)
+{
+	m_IsMainCamera = isMainCamera;
+
+	if (isMainCamera)
+	{
+		Locator::ProvideSceneCameraService(this);
+		if (m_pParentObject && m_pParentObject->GetParentScene())
+		{
+			GameObject* pOldCameraObject{ m_pParentObject->GetParentScene()->GetSceneCamera() };
+			m_pParentObject->GetParentScene()->SetSceneCamera(m_pParentObject);
+			pOldCameraObject->GetComponent<CameraComponent>()->SetIsMainCamera(false);
+		}
+	}
+	else
+	{
+		if (m_pParentObject == m_pParentObject->GetParentScene()->GetSceneCamera())
+		{
+			m_IsMainCamera = true;
+		}
+	}
+}
+
+
+//void CameraComponent::Serialize(YAML::Emitter& out)
+//{
+//	out << YAML::Key << "CameraComponent";
+//	out << YAML::BeginMap;
+//	out << YAML::Key << "IsMainCamera" << YAML::Value << m_IsMainCamera;
+//
+//	out << YAML::Key << "Near" << YAML::Value << m_Near;
+//	out << YAML::Key << "Far" << YAML::Value << m_Far;
+//	out << YAML::Key << "FOV" << YAML::Value << m_FOV;
+//
+//	out << YAML::Key << "View" << YAML::Value << m_View;
+//	out << YAML::Key << "Projection" << YAML::Value << m_Projection;
+//	out << YAML::Key << "ViewProjection" << YAML::Value << m_ViewProjection;
+//	out << YAML::Key << "ViewInverse" << YAML::Value << m_ViewInverse;
+//	out << YAML::Key << "ViewProjectionInverse" << YAML::Value << m_ViewProjectionInverse;
+//	out << YAML::EndMap;
+//}

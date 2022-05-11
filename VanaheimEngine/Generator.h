@@ -1,10 +1,6 @@
 #pragma once
-#include "Observer.h"
 
-#include <vector>
-#include "GeneratorSettings.h"
-
-class Generator : public Observer
+class Generator
 {
 	public:
 		Generator(const std::string& name);
@@ -16,9 +12,6 @@ class Generator : public Observer
 		Generator& operator=(Generator&&) noexcept = delete;
 
 	protected:
-		virtual void onNotify(ObserverEvent event) override;
-		void GenerateImage(const std::vector<std::vector<DirectX::XMFLOAT3>>& map, const std::string& filePath, const DirectX::XMFLOAT2& mapSize);
-		void GenerateImage(const std::vector<std::vector<float>>& map, const std::string& filePath, const DirectX::XMFLOAT2& mapSize);
 
 	private:
 		std::string m_Name;
