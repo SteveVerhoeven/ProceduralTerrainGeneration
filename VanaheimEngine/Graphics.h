@@ -23,11 +23,6 @@ class Graphics final
 		void SetMainRenderTarget();
 		void SetGameRenderTarget();
 
-		//void SetWindowDimensions(const UINT& x, const UINT& y);
-		//void SetFullScreen(const bool fullScreenOn);
-		//
-		//void ResizeWindow(const DirectX::XMINT2& dimensions);
-
 	protected:
 	private:
 		HWND m_Window;

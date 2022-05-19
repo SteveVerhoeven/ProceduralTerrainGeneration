@@ -15,7 +15,7 @@ void ConsoleUI::ShowWindow()
 	if (!m_RenderUI)
 		return;
 
-	CreateWindowBase();
+    BeginWindowBase();
 	Draw();
 	EndWindowBase();
 }

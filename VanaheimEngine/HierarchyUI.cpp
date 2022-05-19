@@ -20,7 +20,7 @@ void HierarchyUI::ShowWindow()
 	if (!m_RenderUI)
 		return;
 
-	CreateWindowBase();
+	BeginWindowBase();
 	Draw();
 	EndWindowBase();
 }
@@ -56,7 +56,10 @@ void HierarchyUI::Draw()
 		if (ImGui::BeginPopupContextItem())
 		{
 			if (ImGui::MenuItem("Destroy Game Object"))
+			{
 				deleteGameObject = true;		// Delay the deletion to prevent code from breaking due to a possible to early delete
+				ImGui::CloseCurrentPopup();
+			}
 
 			ImGui::EndPopup();
 		}
@@ -83,7 +86,10 @@ void HierarchyUI::Draw()
 	if (ImGui::BeginPopupContextWindow(0, 1, false))
 	{
 		if (ImGui::MenuItem("Create empty Game Object"))
+		{
 			m_pScene->AddGameObject(new GameObject({}, {}, {}, "Empty Game Object"));
+			ImGui::CloseCurrentPopup();
+		}
 
 		ImGui::EndPopup();
 	}

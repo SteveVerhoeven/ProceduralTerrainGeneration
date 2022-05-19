@@ -40,7 +40,7 @@ class UI : public Subject
 		DirectX::XMFLOAT2 m_Position;
 		DirectX::XMFLOAT2 m_Size;
 
-		void CreateWindowBase();
+		void BeginWindowBase();
 		void EndWindowBase();
 		
 	private:

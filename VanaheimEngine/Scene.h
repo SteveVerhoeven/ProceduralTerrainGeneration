@@ -44,6 +44,9 @@ class Scene
 		void Create3DObject(const std::string& name, const DirectX::XMFLOAT3& position, const std::string& meshPath, Material* pMaterial);
 		void Create3DObject(const std::string& name, const DirectX::XMFLOAT3& possition, Mesh* pMesh, Material* pMaterial);
 
+		/** Function that creates the inputs for the scene camera */
+		void CreateBaseInputs();
+
 	private:
 		bool m_Cleanup;
 		bool m_IsActive;

@@ -1,0 +1,49 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Game", "Game\Game.vcxproj", "{7FA9857C-6BE0-860D-14CD-6C1000E3020F}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Dependencies", "Dependencies", "{53E47842-3FC8-3998-A828-34EB942B241A}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "IMGUI", "Libs\IMGUI\IMGUI.vcxproj", "{606F530D-CC83-7BBE-9505-1F1E01D977EF}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Premake", "Libs\Premake\Premake.vcxproj", "{6ACC3F23-D6AB-BEBE-DFC3-49954B222520}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "yaml-cpp", "Libs\yaml_cpp\yaml-cpp.vcxproj", "{88F1A057-74BE-FB62-9DD7-E90A890331F1}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "VanaheimEngine", "VanaheimEngine\VanaheimEngine.vcxproj", "{64399387-5007-878D-399B-F7B3250863F2}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{7FA9857C-6BE0-860D-14CD-6C1000E3020F}.Debug|Win32.ActiveCfg = Debug|Win32
+		{7FA9857C-6BE0-860D-14CD-6C1000E3020F}.Debug|Win32.Build.0 = Debug|Win32
+		{7FA9857C-6BE0-860D-14CD-6C1000E3020F}.Release|Win32.ActiveCfg = Release|Win32
+		{7FA9857C-6BE0-860D-14CD-6C1000E3020F}.Release|Win32.Build.0 = Release|Win32
+		{606F530D-CC83-7BBE-9505-1F1E01D977EF}.Debug|Win32.ActiveCfg = Debug|Win32
+		{606F530D-CC83-7BBE-9505-1F1E01D977EF}.Debug|Win32.Build.0 = Debug|Win32
+		{606F530D-CC83-7BBE-9505-1F1E01D977EF}.Release|Win32.ActiveCfg = Release|Win32
+		{606F530D-CC83-7BBE-9505-1F1E01D977EF}.Release|Win32.Build.0 = Release|Win32
+		{6ACC3F23-D6AB-BEBE-DFC3-49954B222520}.Debug|Win32.ActiveCfg = Debug|Win32
+		{6ACC3F23-D6AB-BEBE-DFC3-49954B222520}.Release|Win32.ActiveCfg = Release|Win32
+		{88F1A057-74BE-FB62-9DD7-E90A890331F1}.Debug|Win32.ActiveCfg = Debug|Win32
+		{88F1A057-74BE-FB62-9DD7-E90A890331F1}.Debug|Win32.Build.0 = Debug|Win32
+		{88F1A057-74BE-FB62-9DD7-E90A890331F1}.Release|Win32.ActiveCfg = Release|Win32
+		{88F1A057-74BE-FB62-9DD7-E90A890331F1}.Release|Win32.Build.0 = Release|Win32
+		{64399387-5007-878D-399B-F7B3250863F2}.Debug|Win32.ActiveCfg = Debug|Win32
+		{64399387-5007-878D-399B-F7B3250863F2}.Debug|Win32.Build.0 = Debug|Win32
+		{64399387-5007-878D-399B-F7B3250863F2}.Release|Win32.ActiveCfg = Release|Win32
+		{64399387-5007-878D-399B-F7B3250863F2}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{606F530D-CC83-7BBE-9505-1F1E01D977EF} = {53E47842-3FC8-3998-A828-34EB942B241A}
+		{6ACC3F23-D6AB-BEBE-DFC3-49954B222520} = {53E47842-3FC8-3998-A828-34EB942B241A}
+		{88F1A057-74BE-FB62-9DD7-E90A890331F1} = {53E47842-3FC8-3998-A828-34EB942B241A}
+	EndGlobalSection
+EndGlobal

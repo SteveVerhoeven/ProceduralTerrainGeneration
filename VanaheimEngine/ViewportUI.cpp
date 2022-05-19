@@ -17,7 +17,7 @@ void ViewportUI::ShowWindow()
 	if (!m_RenderUI)
 		return;
 
-	CreateWindowBase();
+	BeginWindowBase();
 
 	Graphics* pGraphics{ Locator::GetGraphicsService() };
 	const float width{ ImGui::GetWindowWidth() };

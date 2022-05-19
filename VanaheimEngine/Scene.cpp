@@ -6,6 +6,9 @@
 
 #include "Line.h"
 
+#include "MoveCameraCommand.h"
+#include "RotateCameraCommand.h"
+
 Scene::Scene()
 	  : m_Cleanup(false)
 	  , m_IsActive(false)
@@ -236,4 +239,15 @@ void Scene::CleanScene()
 
 		m_Cleanup = false;
 	}
+}
+
+void Scene::CreateBaseInputs()
+{
+	InputManager* pInputManager{ Locator::GetInputManagerService() };
+
+	pInputManager->AddKeyToMap(ControllerButton::ButtonUp, KeyboardButton::W, ButtonPressType::BUTTON_RELEASED, "MOVE_FORWARD", new MoveCameraCommand(true, false, false, false));
+	pInputManager->AddKeyToMap(ControllerButton::ButtonDown, KeyboardButton::S, ButtonPressType::BUTTON_RELEASED, "MOVE_BACKWARD", new MoveCameraCommand(false, true, false, false));
+	pInputManager->AddKeyToMap(ControllerButton::ButtonLeft, KeyboardButton::A, ButtonPressType::BUTTON_RELEASED, "MOVE_LEFT", new MoveCameraCommand(false, false, true, false));
+	pInputManager->AddKeyToMap(ControllerButton::ButtonRight, KeyboardButton::D, ButtonPressType::BUTTON_RELEASED, "MOVE_RIGHT", new MoveCameraCommand(false, false, false, true));
+	pInputManager->AddKeyToMap(ControllerButton::ButtonLThumbStick, KeyboardButton::E, ButtonPressType::BUTTON_HOLD, "ROTATE", new RotateCameraCommand());
 }

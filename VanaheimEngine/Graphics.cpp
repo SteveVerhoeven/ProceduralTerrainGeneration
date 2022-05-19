@@ -45,63 +45,6 @@ Graphics::~Graphics()
 	}
 	DELETE_RESOURCE(m_pDXGIFactory);
 }
-//void Graphics::SetWindowDimensions(const UINT& x, const UINT& y)
-//{
-//	m_Width = x;
-//	m_Height = y;
-//}
-//void Graphics::SetFullScreen(const bool /*fullScreenOn*/)
-//{
-//	BOOL currentState{};
-//	m_pSwapChain->GetFullscreenState(&currentState, NULL);
-//
-//	bool newState = false;
-//	if (currentState == false)
-//		newState = true;
-//
-//	m_pSwapChain->SetFullscreenState(newState, NULL);
-//}
-//
-//void Graphics::ResizeWindow(const DirectX::XMINT2& /*dimensions*/)
-//{
-//	if (m_pSwapChain)
-//	{
-//		//m_pDeviceContext->OMSetRenderTargets(0, 0, 0);
-//
-//		//// Release all outstanding references to the swap chain's buffers.
-//		//m_pRenderTargetBuffer_Main->Release();
-//		//m_pRenderTargetBuffer_Game->Release();
-//
-//		//HRESULT hr;
-//		//// Preserve the existing buffer count and format.
-//		//// Automatically choose the width and height to match the client rect for HWNDs.
-//		//hr = m_pSwapChain->ResizeBuffers(0, 0, 0, DXGI_FORMAT_UNKNOWN, 0);
-//
-//		//// Perform error handling here!
-//
-//		//// Get buffer and create a render-target-view.
-//		//ID3D11Texture2D* pBuffer;
-//		//hr = m_pSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D),
-//		//	(void**)&pBuffer);
-//		//// Perform error handling here!
-//
-//		//hr = m_pDevice->CreateRenderTargetView(pBuffer, NULL, &m_pRenderTargetBuffer_Main);
-//		//// Perform error handling here!
-//		//pBuffer->Release();
-//
-//		//g_pd3dDeviceContext->OMSetRenderTargets(1, &g_pRenderTargetView, NULL);
-//
-//		//// Set up the viewport.
-//		//D3D11_VIEWPORT vp;
-//		//vp.Width = width;
-//		//vp.Height = height;
-//		//vp.MinDepth = 0.0f;
-//		//vp.MaxDepth = 1.0f;
-//		//vp.TopLeftX = 0;
-//		//vp.TopLeftY = 0;
-//		//g_pd3dDeviceContext->RSSetViewports(1, &vp);
-//	}
-//}
 
 HRESULT Graphics::InitializeDirectX(const int width, const int height)
 {
@@ -127,8 +70,6 @@ HRESULT Graphics::InitializeDirectX(const int width, const int height)
 	hr = CreateSwapChain(width, height);
 	if (FAILED(hr))
 		return hr;
-
-	//m_pSwapChain->SetFullscreenState(true, NULL);
 
 	// *************************************************************
 	// Create Depth/Stencil Buffer and View

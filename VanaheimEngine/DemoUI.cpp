@@ -11,7 +11,7 @@ void DemoUI::ShowWindow()
 	if (!m_RenderUI)
 		return;
 
-	CreateWindowBase();
+	BeginWindowBase();
 	ImGui::ShowDemoWindow(&m_ShowDemo);
 	EndWindowBase();
 }

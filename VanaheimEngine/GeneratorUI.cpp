@@ -12,7 +12,7 @@ GeneratorUI::GeneratorUI(const std::string& windowName, const DirectX::XMFLOAT2&
 
 void GeneratorUI::ShowWindow()
 {
-	CreateWindowBase();
+	BeginWindowBase();
 
 	ImGui::Text("VARIABLES");
 	ImGui::Indent();

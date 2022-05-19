@@ -8,7 +8,7 @@ UI::UI(const std::string& windowName, const DirectX::XMFLOAT2& position, const D
    , m_RenderUI(true)
 {}
 
-void UI::CreateWindowBase()
+void UI::BeginWindowBase()
 {
 	ImGui::Begin(m_Name.c_str(), &m_RenderUI);
 }

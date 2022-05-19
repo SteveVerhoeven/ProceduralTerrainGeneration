@@ -19,8 +19,8 @@ UIManager::UIManager(Window* pWindow)
 {}
 UIManager::~UIManager()
 {
-	DELETE_POINTERS(m_pUIs, m_pUIs.size());
 	ShutdownImGui();
+	DELETE_POINTERS(m_pUIs, m_pUIs.size());
 }
 
 void UIManager::Initialize()
@@ -168,15 +168,18 @@ void UIManager::OpenDockSpace()
             {
                 SceneSerializer serializer{};
                 serializer.Serialize("Scenes/Scene.Vanaheim", pScene);
+                ImGui::CloseCurrentPopup();
             }
             if (ImGui::MenuItem("DeSave"))
             {
                 SceneSerializer serializer{};
                 serializer.Deserialize("Scenes/Scene.Vanaheim", pScene);
+                ImGui::CloseCurrentPopup();
             }
             if (ImGui::MenuItem("Exit"))
             {
                 Locator::GetInputManagerService()->QuitGame();
+                ImGui::CloseCurrentPopup();
             }
 
             ImGui::EndMenu();
@@ -190,11 +193,13 @@ void UIManager::OpenDockSpace()
                 {
                     //pGraphics->SetWindowDimensions(1920, 1080);
                     //pGraphics->ResizeWindow({ 1920, 1080 });
+                    ImGui::CloseCurrentPopup();
                 }
                 if (ImGui::MenuItem("2560x1080"))
                 {
                     //pGraphics->SetWindowDimensions(2560, 1080);
                     //pGraphics->ResizeWindow({ 2560, 1080 });
+                    ImGui::CloseCurrentPopup();
                 }
                 ImGui::EndMenu();
             }
@@ -202,7 +207,9 @@ void UIManager::OpenDockSpace()
             {
                 //Graphics* pGraphics{ Locator::GetGraphicsService() };
                 //pGraphics->SetFullScreen(true);
+                ImGui::CloseCurrentPopup();
             }
+
             ImGui::EndMenu();
         }
         if (ImGui::BeginMenu("Window"))
@@ -237,10 +244,13 @@ void UIManager::OpenDockSpace()
                 const size_t objectCount{ pGameObjects.size() };
                 for (size_t i{}; i < objectCount; ++i)
                     pGameObjects[i]->SetRemoveFlag();
+
+                ImGui::CloseCurrentPopup();
             }
 
             ImGui::EndMenu();
         }
+        
         ImGui::EndMenuBar();
     }
 }

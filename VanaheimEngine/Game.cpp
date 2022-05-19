@@ -46,6 +46,9 @@ int Game::GameLoop()
 		InputManager* pInputManager{ Locator::GetInputManagerService() };
 		msg = pInputManager->ProcessInput(elapsedSec);
 
+		if (msg.message == WM_QUIT)
+			break;
+
 		// Update game
 		SceneManager* sceneManager{ Locator::GetSceneManagerService() };
 		while (pTimer->GetLag() >= timeEachUpdate)

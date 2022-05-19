@@ -20,11 +20,8 @@ class Scene_Game final : public Scene
 		virtual void Render() const override;
 
 	private:
-		/** Function that creates the inputs for the scene camera */
-		void CreateInputs();	// TODO: move to the base class
-
-		///** Function that creates a landscape from a 2D plane */
-		//void CreateLandscape_2DPlane();
+		/** Function that creates a landscape from a 2D plane */
+		void CreateLandscape_2DPlane();
 		///** Function that creates a landscape with voxels on the CPU */
 		//void CreateLandscape_VoxelsCPU();
 		///** Function that creates a landscape with voxels on the GPU */

@@ -1,3 +1,7 @@
 .vs
 Debug
 Release
+bin
+bin-int
+Libs\IMGUI\bin
+Libs/IMGUI/bin-int
